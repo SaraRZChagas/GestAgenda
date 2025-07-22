@@ -1,4 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Guttman Logo 1';
+  src: url('/fonts/GuttmanLogo1.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 
 @plugin 'tailwindcss-animate';
 
@@ -8,8 +16,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Poppins', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -67,6 +74,7 @@
   If we ever want to remove these styles, we need to add an explicit border
   color utility to any element that depends on these defaults.
 */
+
 @layer base {
     *,
     ::after,
