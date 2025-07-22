@@ -1,62 +1,68 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Head, Link } from '@inertiajs/react';
+import { type BreadcrumbItem } from '@/types';
+import SchedulingRules from '@/pages/professional/components/scheduling-rules';
+import ServiceManager from '@/pages/professional/components/service-manager';
+import AppointmentHistory from '@/pages/professional/components/appointment-history';
+import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 
-
+const breadcrumbs: BreadcrumbItem[] = [
+  { title: 'Dashboard', href: route('professional.dashboard') },
+];
 
 export default function Dashboard() {
-    return (
-        <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }]}>
-            <Head title="Dashboard Profissional" />
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Dashboard do Profissional" />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-                {/* Gestão de Serviços */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Serviços</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Gerencie os serviços oferecidos, valores e duração.
-                        </p>
-                        <Button asChild>
-                            <a href="/professional/services">Gerenciar Serviços</a>
-                        </Button>
-                    </CardContent>
-                </Card>
+       <Head title="Dashboard" />
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          {/* Card 1 - Regras de Agendamento */}
+          <Link
+            href={route('professional.scheduling-rules.index')}
+            className="relative aspect-video overflow-hidden rounded-xl border border-gray-300 p-4 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+          >
+            <h3 className="text-lg font-semibold">Regras de Agendamento</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Defina os dias e horários disponíveis para atendimentos.
+            </p>
+          </Link>
 
-                {/* Regras de Agendamento */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Regras de Agendamento</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Defina horários de trabalho, bloqueios e regras de cancelamento.
-                        </p>
-                        <Button asChild>
-                            <a href="/professional/scheduling-rules">Configurar Regras</a>
-                        </Button>
-                    </CardContent>
-                </Card>
+          {/* Card 2 - Gestão de Serviços */}
+          <Link
+            href={route('professional.services.index')}
+            className="relative aspect-video overflow-hidden rounded-xl border border-gray-300 p-4 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+          >
+            <h3 className="text-lg font-semibold">Serviços Oferecidos</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Cadastre e gerencie os serviços prestados com valores e duração.
+            </p>
+          </Link>
 
-                {/* Histórico de Atendimentos */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Histórico de Atendimentos</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Veja os atendimentos anteriores e acompanhe os status.
-                        </p>
-                        <Button asChild>
-                            <a href="/professional/appointments/history">Ver Histórico</a>
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-        </AppLayout>
-    );
+          {/* Card 3 - Histórico de Atendimentos */}
+          <Link
+            href={route('professional.appointments.history')}
+            className="relative aspect-video overflow-hidden rounded-xl border border-gray-300 p-4 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+          >
+            <h3 className="text-lg font-semibold">Histórico de Atendimentos</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Consulte atendimentos realizados, cancelados e observações.
+            </p>
+          </Link>
+        </div>
+
+        {/* Se quiser manter a área inferior como placeholder de gráficos ou resumo */}
+        <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
+          <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-8 p-6">
+        <SchedulingRules />
+        <ServiceManager />
+        <AppointmentHistory />
+      </div>
+
+    </AppLayout>
+  );
 }
-
