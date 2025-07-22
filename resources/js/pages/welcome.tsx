@@ -71,7 +71,7 @@ const successMessage = (props as any)?.flash?.success;
       </header>
 
       {/* Hero */}
-      <section className="px-8 py-20 flex flex-col lg:flex-row items-center justify-between max-w-[90%] mx-auto">
+      <section className="mt-28 px-8 py-20 flex flex-col lg:flex-row items-center justify-between max-w-[90%] mx-auto">
         <div className="max-w-xl mb-12 lg:mb-0 text-white">
           <h2 className="text-4xl font-bold mb-6">Sua agenda. Seu tempo. Sua liberdade.</h2>
           <p className="text-lg leading-relaxed">
