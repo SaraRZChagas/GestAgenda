@@ -28,8 +28,7 @@ return new class extends Migration
             $table->string('addressProfessionals', 256)->nullable();
             $table->string('phoneProfessionals', 45)->nullable();
             $table->string('nameBusinessProfessionals', 45)->nullable();
-            $table->timestamp('createdProfessionals')->nullable();
-            $table->timestamp('updatedProfessionals')->nullable();
+            $table->timestamps();
             $table->unsignedBigInteger('idUsers')->nullable();
 
             $table->foreign('idUsers')->references('id')->on('Users');
@@ -40,8 +39,7 @@ return new class extends Migration
             $table->string('nameCustomers', 45)->nullable();
             $table->string('phoneCustomers', 45)->nullable();
             $table->string('addressCustomers', 256)->nullable();
-            $table->timestamp('createdCustomers')->nullable();
-            $table->timestamp('updatedCustomers')->nullable();
+            $table->timestamps();
             $table->unsignedBigInteger('idUsers')->nullable();
 
             $table->foreign('idUsers')->references('id')->on('Users');
@@ -79,8 +77,7 @@ return new class extends Migration
             $table->decimal('priceServices', 6, 2)->nullable();
             $table->integer('durationMinutesServices')->nullable();
             $table->boolean('isActiveServices')->nullable();
-            $table->timestamp('createdServices')->nullable();
-            $table->timestamp('updatedServices')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
             $table->foreign('idServicesTypes')->references('idServicesTypes')->on('ServicesTypes');
@@ -92,11 +89,10 @@ return new class extends Migration
             $table->unsignedBigInteger('idCustomers')->nullable();
             $table->unsignedBigInteger('idServices')->nullable();
             $table->dateTime('startDatetimeAppointments')->nullable();
-            $table->dateTime('endDatetimeMarkings')->nullable();
+            $table->dateTime('endDatetimeAppointments')->nullable();
             $table->enum('statusAppointments', ['scheduled', 'completed', 'cancelled', 'no_show'])->nullable();
             $table->text('notesAppointments', 500)->nullable();
-            $table->timestamp('createdAppointments')->nullable();
-            $table->timestamp('updatedAppointments')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
             $table->foreign('idCustomers')->references('idCustomers')->on('Customers');
@@ -104,9 +100,9 @@ return new class extends Migration
         });
 
         Schema::create('ScheduleBlocksTypes', function (Blueprint $table) {
-            $table->id('idReservationsScheduleBlocks');
-            $table->string('nameReservationsScheduleBlocks', 45)->nullable();
-            $table->string('colorReservationsScheduleBlocks', 10)->nullable();
+            $table->id('idScheduleBlocksTypes');
+            $table->string('nameScheduleBlocksTypes', 45)->nullable();
+            $table->string('colorScheduleBlocksTypes', 10)->nullable();
         });
 
         Schema::create('ScheduleBlocks', function (Blueprint $table) {
@@ -114,13 +110,12 @@ return new class extends Migration
             $table->unsignedBigInteger('idProfessionals')->nullable();
             $table->dateTime('startDatetimeScheduleBlocks')->nullable();
             $table->dateTime('endDatetimeScheduleBlocks')->nullable();
-            $table->unsignedBigInteger('idReservationsTypes')->nullable();
+            $table->unsignedBigInteger('idScheduleBlocksTypes')->nullable();
             $table->string('descriptionScheduleBlocks', 100)->nullable();
-            $table->timestamp('createdScheduleBlocks')->nullable();
-            $table->timestamp('updatedScheduleBlocks')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
-            $table->foreign('idReservationsTypes')->references('idReservationsScheduleBlocks')->on('ScheduleBlocksTypes');
+            $table->foreign('idScheduleBlocksTypes')->references('idScheduleBlocksTypes')->on('ScheduleBlocksTypes');
         });
 
         Schema::create('WorkingHours', function (Blueprint $table) {
@@ -129,8 +124,7 @@ return new class extends Migration
             $table->integer('weekdayWorkingHours')->nullable();
             $table->time('startTimeWorkingHours')->nullable();
             $table->time('endTimeWorkingHours')->nullable();
-            $table->timestamp('createdWorkingHours')->nullable();
-            $table->timestamp('updatedWorkingHours')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
         });
@@ -140,8 +134,7 @@ return new class extends Migration
             $table->string('nameSubscriptionPlans', 45)->nullable();
             $table->decimal('priceSubscriptionPlans', 6, 2)->nullable();
             $table->json('featuresSubscriptionPlans')->nullable();
-            $table->timestamp('createdSubscriptionPlans')->nullable();
-            $table->timestamp('updatedSubscriptionPlans')->nullable();
+            $table->timestamps();
         });
 
         Schema::create('Subscriptions', function (Blueprint $table) {
@@ -151,8 +144,7 @@ return new class extends Migration
             $table->date('startDateSubscriptions')->nullable();
             $table->date('endDateSubscriptions')->nullable();
             $table->enum('statusSubscriptions', ['active', 'expired', 'cancelled'])->nullable();
-            $table->timestamp('createdSubscriptions')->nullable();
-            $table->timestamp('updatedSubscriptions')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
             $table->foreign('idSubscriptionPlans')->references('idSubscriptionPlans')->on('SubscriptionPlans');
@@ -167,7 +159,7 @@ return new class extends Migration
             $table->string('transactionCodePayments', 256)->nullable();
             $table->enum('statusPayments', ['paid', 'pending', 'failed'])->nullable();
             $table->dateTime('paymentDatePayments')->nullable();
-            $table->timestamp('createdPayments')->nullable();
+            $table->timestamps();
 
             $table->foreign('idSubscriptions')->references('idSubscriptions')->on('Subscriptions');
         });
@@ -178,7 +170,7 @@ return new class extends Migration
             $table->enum('methodTypePaymentMethods', ['PIX', 'Conta Bancária', 'IBAN', 'MBWay', 'Cartão', 'Dinheiro'])->nullable();
             $table->boolean('isActivePaymentMethods')->nullable();
             $table->json('detailsPaymentMethods')->nullable();
-            $table->timestamp('createdPaymentMethods')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
         });
@@ -187,7 +179,7 @@ return new class extends Migration
             $table->id('idProfessionalsCustomers');
             $table->unsignedBigInteger('idProfessionals')->nullable();
             $table->unsignedBigInteger('idCustomers')->nullable();
-            $table->timestamp('createdProfessionalsCustomers')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
             $table->foreign('idCustomers')->references('idCustomers')->on('Customers');
@@ -199,9 +191,8 @@ return new class extends Migration
             $table->integer('allowCancellationSchedulingRules')->nullable();
             $table->unsignedBigInteger('idProfessionals')->nullable();
             $table->boolean('confirmBookingsSchedulingRules')->nullable();
-            $table->timestamp('createdSchedulingRules')->nullable();
             $table->integer('allowRescheduleSchedulingRules')->nullable();
-            $table->timestamp('updatedSchedulingRules')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
         });
@@ -213,7 +204,7 @@ return new class extends Migration
             $table->text('messageNotifications', 500)->nullable();
             $table->dateTime('sentNotifications')->nullable();
             $table->dateTime('readNotifications')->nullable();
-            $table->timestamp('createdNotifications')->nullable();
+            $table->timestamps();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
         });
@@ -226,8 +217,7 @@ return new class extends Migration
             $table->string('labelDocuments', 100)->nullable();
             $table->boolean('isPrimaryDocuments')->nullable();
             $table->boolean('verifiedDocuments')->nullable();
-            $table->timestamp('createdDocuments')->nullable();
-            $table->timestamp('updatedDocuments')->nullable();
+            $table->timestamps();
             $table->unsignedBigInteger('idCustomers')->nullable();
 
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
@@ -240,8 +230,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idProfessionals')->nullable();
             $table->text('noteAppointmentNotes', 500)->nullable();
             $table->boolean('visibleClientAppointmentNotes')->default(0);
-            $table->timestamp('createdAppointmentNotes')->nullable();
-            $table->timestamp('updatedAppointmentNotes')->nullable();
+            $table->timestamps();
 
             $table->foreign('idAppointments')->references('idAppointments')->on('Appointments');
             $table->foreign('idProfessionals')->references('idProfessionals')->on('Professionals');
@@ -250,7 +239,7 @@ return new class extends Migration
         Schema::create('PasswordResetTokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
         });
 
         Schema::create('Sessions', function (Blueprint $table) {

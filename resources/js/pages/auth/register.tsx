@@ -10,26 +10,35 @@ import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 
 type RegisterForm = {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-    role: string;
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  role: string;
+  username: string;
+  profile_photo: File | null;
 };
 
+
+
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
+    const { data, setData, post, processing, errors, reset } = useForm<RegisterForm>({
         name: '',
+        phone: '',
         email: '',
         password: '',
         password_confirmation: '',
-        role: 'client', // valor padrão
+        role: 'client',
+        username: '',
+        profile_photo: null,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('register'), {
             onFinish: () => reset('password', 'password_confirmation'),
+            forceFormData: true,
         });
     };
 
@@ -54,6 +63,21 @@ export default function Register() {
                         />
                         <InputError message={errors.name} className="mt-2" />
                     </div>
+                    <Label htmlFor="phone">Phone</Label>
+                        <Input
+                            id="phone"
+                            type="text"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="phone"
+                            value={data.phone}
+                            onChange={(e) => setData('phone', e.target.value)}
+                            disabled={processing}
+                            placeholder="Phone"
+                        />
+                        <InputError message={errors.name} className="mt-2" />
+                    </div>
 
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email</Label>
@@ -69,6 +93,38 @@ export default function Register() {
                             placeholder="email@example.com"
                         />
                         <InputError message={errors.email} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="username">Username público</Label>
+                        <div className="bg-gray-100 text-sm text-gray-600 p-3 rounded">
+                        Escolha um nome de usuário único, composto apenas por letras, sem espaços, acentos ou caracteres especiais. Esse nome será usado para criar o link do seu site público (ex: gestagenda.pt/seuusername), por isso deve ser exclusivo para cada usuário.
+                        </div>
+                        <Input
+                            id="username"
+                            type="text"
+                            required
+                            placeholder="ex: joaotreinador"
+                            value={data.username}
+                            onChange={(e) => setData('username', e.target.value)}
+                            disabled={processing}
+                        />
+                        <InputError message={errors.username} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="profile_photo">Foto de perfil</Label>
+                        <div className="bg-gray-100 text-sm text-gray-600 p-3 rounded">
+                        Envie uma foto em formato retrato, sua ou da sua empresa. O arquivo deve estar nos formatos JPG ou PNG, com tamanho máximo de 500 pixels de altura por 400 pixels de largura. Certifique-se de que a imagem esteja nítida e bem enquadrada.
+                        </div>
+                        <Input
+                            id="profile_photo"
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => setData('profile_photo', e.target.files?.[0] || null)}
+                            disabled={processing}
+                        />
+                        <InputError message={errors.profile_photo} />
                     </div>
 
                     <div className="grid gap-2">
@@ -130,7 +186,7 @@ export default function Register() {
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Criar conta
                     </Button>
-                </div>
+                
 
                 <div className="text-center text-sm text-muted-foreground">
                     Já tem uma conta?{' '}

@@ -71,7 +71,7 @@ const successMessage = (props as any)?.flash?.success;
       </header>
 
       {/* Hero */}
-      <section className="mt-28 px-8 py-20 flex flex-col lg:flex-row items-center justify-between max-w-[90%] mx-auto">
+      <section className="mt-28 px-8 py-20 flex flex-col lg:flex-row items-center justify-between max-w-[96%] mx-auto">
         <div className="max-w-xl mb-12 lg:mb-0 text-white">
           <h2 className="text-4xl font-bold mb-6">Sua agenda. Seu tempo. Sua liberdade.</h2>
           <p className="text-lg leading-relaxed">
@@ -92,7 +92,7 @@ const successMessage = (props as any)?.flash?.success;
       </section>
 
       {/* Planos */}
-      <section id="planos" className="bg-gray-100 text-black py-16 max-w-[90%] mx-auto">
+      <section id="planos" className="bg-gray-100 text-black py-16 max-w-[96%] mx-auto">
         <h3 className="text-[36px] font-medium text-[#4E76AB] mb-12 text-center">Conheça nossos Planos</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Plano Free */}
@@ -156,7 +156,7 @@ const successMessage = (props as any)?.flash?.success;
       </section>
 
       {/* Sessão destaque dupla */}
-      <section className="bg-white py-16 px-8 max-w-[90%] mx-auto space-y-20">
+      <section className="bg-white py-16 px-8 max-w-[96%] mx-auto space-y-20">
         {/* Linha 1: Imagem esquerda */}
         <div className="flex flex-col md:flex-row items-center gap-12">
           <img src="/images/sejaprofissional_lphome.svg" alt="Profissional" className="w-full md:w-1/2" />
@@ -189,7 +189,7 @@ const successMessage = (props as any)?.flash?.success;
       </section>
 
       {/* Contacto */}
-      <section id="contacto" className="bg-gray-100 py-16 px-8 text-center max-w-[90%] mx-auto">
+      <section id="contacto" className="bg-gray-100 py-16 px-8 text-center max-w-[96%] mx-auto">
         <h3 className="text-[36px] font-medium text-[#4E76AB] mb-12 text-center">Contacto</h3>
         <p className="mb-6 text-black">Se quiser mais informações entre em contacto no formulário abaixo:</p>
         <form  onSubmit={handleSubmit}  className="max-w-3xl mx-auto space-y-4 text-left">
