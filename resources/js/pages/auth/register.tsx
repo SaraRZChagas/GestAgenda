@@ -45,7 +45,7 @@ export default function Register() {
     return (
         <AuthLayout title="Crie uma conta" description="Insira suas informações para criar uma nova conta.">
             <Head title="Register" />
-            <form className="flex flex-col gap-6" onSubmit={submit}>
+            <form className="flex flex-col gap-6" onSubmit={submit} encType="multipart/form-data">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
                         <Label htmlFor="name">Nome</Label>
@@ -63,6 +63,7 @@ export default function Register() {
                         />
                         <InputError message={errors.name} className="mt-2" />
                     </div>
+                    <div>
                     <Label htmlFor="phone">Phone</Label>
                         <Input
                             id="phone"
@@ -121,7 +122,7 @@ export default function Register() {
                             id="profile_photo"
                             type="file"
                             accept="image/*"
-                            onChange={(e) => setData('profile_photo', e.target.files?.[0] || null)}
+                            onChange={(e) => { console.log(e); setData('profile_photo', e.target.files?.[0] || null); }}
                             disabled={processing}
                         />
                         <InputError message={errors.profile_photo} />
@@ -193,6 +194,7 @@ export default function Register() {
                     <TextLink href={route('login')} tabIndex={6}>
                         Log in
                     </TextLink>
+                </div>
                 </div>
             </form>
         </AuthLayout>

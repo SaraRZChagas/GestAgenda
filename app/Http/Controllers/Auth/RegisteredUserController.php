@@ -51,7 +51,7 @@ class RegisteredUserController extends Controller
         // Upload da imagem, se existir
         if ($request->hasFile('profile_photo')) {
             $folder = $request->role === 'professional' ? 'profissional_img' : 'cliente_img';
-            $path = $request->file('profile_photo')->store("images/{$folder}", 'public');
+            $photoPath = $request->file('profile_photo')->store("images/{$folder}/{$request->username}", 'public');
         }
 
         // Criar registro em clients ou professionals

@@ -15,4 +15,12 @@ class Professional extends Model
     {
         return $this->belongsTo(User::class, 'idusers');
     }
+    public function services()
+    {
+        return $this->hasMany(Service::class, 'idProfessionals', 'idProfessionals');
+    }
+    public function workingHour()
+    {
+        return $this->hasMany(WorkingHour::class, 'idProfessionals', 'idProfessionals');
+    }
 }

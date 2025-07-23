@@ -6,6 +6,7 @@ interface PublicProfileProps {
     name: string;
     description: string;
     address: string;
+    profile_photo:string;
     postalCode: string;
     workingHours: string;
     contacts: string[];
@@ -21,6 +22,8 @@ interface PublicProfileProps {
 }
 
 export default function PublicProfile({ profile }: PublicProfileProps) {
+
+  console.log(profile);
   return (
     <>
       <Head title={`GestAgenda - ${profile.name}`} />
@@ -40,12 +43,19 @@ export default function PublicProfile({ profile }: PublicProfileProps) {
         </header>
 
         {/* Perfil Profissional */}
-        <section id="quem" className="py-16 px-8 max-w-[90%] mx-auto text-white">
-          <h2 className="text-xl text-[#FFD700] font-bold mb-4">{profile.name}</h2>
-          <p className="mb-4 max-w-2xl">{profile.description}</p>
-          <p className="mt-4"><strong className="text-[#FFD700]">Endereço:</strong><br />{profile.address}<br />Código Postal: {profile.postalCode}</p>
-          <p className="mt-4"><strong className="text-[#FFD700]">Horário de Trabalho:</strong><br />{profile.workingHours}</p>
-          <p className="mt-4"><strong className="text-[#FFD700]">Contactos:</strong><br />{profile.contacts.join('<br/>')}</p>
+        <section id="quem" className="py-16 px-8 flex flex-col lg:flex-row justify-between  max-w-[90%] mx-auto  text-white">
+            <div className='max-w-xl mb-12 lg:mb-0'>
+              <h2 className="text-xl text-[#FFD700] font-bold mb-4">{profile.name}</h2>
+              <p className="mb-4 max-w-2xl">{profile.description}</p>
+              <p className="mt-4"><strong className="text-[#FFD700]">Endereço:</strong><br />{profile.address}</p>
+              <p className="mt-4"><strong className="text-[#FFD700]">Horário de Trabalho:</strong><br />{profile.workingHours}</p>
+              <p className="mt-4"><strong className="text-[#FFD700]">Contactos:</strong><br /> {profile.contacts.map((c, i) => (    <span key={i} className="block">{c}</span>  ))}
+              </p>
+            </div>
+            <div className="relative overflow-hidden w-48 h-64">
+              <img src={profile.profile_photo.replace('8000','8082')} className="absolute inset-0 w-full h-full object-cover"/>
+            </div>
+            
         </section>
 
         {/* Serviços */}
