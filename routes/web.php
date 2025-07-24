@@ -14,6 +14,10 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::post('/professional/services', [ServiceController::class, 'store'])
+    ->name('professional.services.store')
+    ->middleware(['auth', 'verified']);
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/client/dashboard', fn () => Inertia::render('client/dashboard'))->name('client.dashboard');
     Route::get('/professional/dashboard', fn () => Inertia::render('professional/dashboard'))->name('professional.dashboard');
@@ -28,7 +32,14 @@ Route::middleware(['auth', 'verified'])->prefix('professional')->name('professio
 
 
 });
+Route::middleware(['auth', 'verified'])->prefix('professional')->name('professional.')->group(function () {
+    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+});
 
+Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
 
