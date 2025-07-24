@@ -43,5 +43,12 @@ Route::post('/services', [ServiceController::class, 'store'])->name('services.st
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
 
+
+Route::middleware(['auth', 'verified'])->prefix('professional')->name('professional.')->group(function () {
+    Route::get('schedule-blocks', [ScheduleBlockController::class, 'index'])->name('schedule-blocks.index');
+    Route::post('schedule-blocks', [ScheduleBlockController::class, 'store'])->name('schedule-blocks.store');
+    Route::post('schedule-blocks/types', [ScheduleBlockController::class, 'storeType'])->name('schedule-blocks.storeType');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
