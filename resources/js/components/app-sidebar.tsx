@@ -8,12 +8,28 @@ import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
+  {
+    title: 'Topo',
+    href: '/professional/dashboard',
+    icon: LayoutGrid,
+  },
+  {
+    title: 'Regras de Agendamento',
+    href: '/professional/dashboard#scheduling-rules',
+    icon: BookOpen,
+  },
+  {
+    title: 'Serviços Oferecidos',
+    href: '/professional/dashboard#service-manager',
+    icon: Folder,
+  },
+  {
+    title: 'Histórico de Atendimentos',
+    href: '/professional/dashboard#appointment-history',
+    icon: LayoutGrid, // ou outro ícone como Clock, Calendar, etc.
+  },
 ];
+
 
 const footerNavItems: NavItem[] = [
     {

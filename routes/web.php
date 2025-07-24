@@ -24,10 +24,17 @@ Route::middleware(['auth', 'verified'])->prefix('professional')->name('professio
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('/scheduling-rules', [SchedulingRuleController::class, 'index'])->name('scheduling-rules.index');
     Route::get('/appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');
-
-
 });
 
+
+Route::middleware(['auth', 'verified'])->prefix('professional')->name('professional.')->group(function () {
+    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+});
+
+Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 require __DIR__.'/settings.php';

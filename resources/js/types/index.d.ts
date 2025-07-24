@@ -41,3 +41,31 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Service {
+  idServices: number;
+  idProfessionals: number;
+  idServicesTypes: number | null;
+  nameServices: string;
+  descriptionServices: string;
+  priceServices: string;
+  durationMinutesServices: number;
+  isActiveServices: boolean;
+  createdServices: string | null;
+  updatedServices: string | null;
+}
+
+// Tipagem global de dados compartilhados via Inertia (ex: user)
+export interface PageProps<T = Record<string, unknown>> {
+  auth: {
+    user: {
+      id: number;
+      name: string;
+      email: string;
+      type: 'client' | 'professional'; // ou outro se tiver
+      // adicione mais campos se necessário
+    };
+  };
+  // props específicos da página
+  data?: T;
+}
