@@ -10,7 +10,7 @@ class Service extends Model
 {
     protected $table = 'Services';
     protected $primaryKey = 'idServices';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'idProfessionals',

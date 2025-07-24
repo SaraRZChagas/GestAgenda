@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\Professional\DashboardController;
 use App\Http\Controllers\Professional\ServiceController;
 use App\Http\Controllers\Professional\SchedulingRuleController;
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'verified'])->prefix('professional')->name('professio
 
 Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

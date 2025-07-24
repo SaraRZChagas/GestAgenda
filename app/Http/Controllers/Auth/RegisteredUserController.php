@@ -33,17 +33,39 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'phone' => ['required', 'regex:/^\+?[0-9\s\-]{9,20}$/'],
+            'username' => ['required','string','max:50','unique:users,username','regex:/^[a-z0-9_]+$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:client,professional'],
+            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:512|dimensions:max_width=400,max_height=500'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'username' => $request->username,
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
 
+        // Upload da imagem, se existir
+        if ($request->hasFile('profile_photo')) {
+            $folder = $request->role === 'professional' ? 'profissional_img' : 'cliente_img';
+            $photoPath = $request->file('profile_photo')->store("images/{$folder}/{$request->username}", 'public');
+        }
+
+        // Criar registro em clients ou professionals
+        if ($request->role === 'professional') {
+            $user->professional()->create([
+            'phoneProfessionals' => $request->phone,
+            'profile_photo' => $photoPath ?? null,
+            ]);
+        } else {
+            $user->client()->create([
+                'phoneCustomers' => $request->phone,
+                'profile_photo' => $photoPath ?? null,
+            ]);
+        }
         event(new Registered($user));
 
         Auth::login($user);

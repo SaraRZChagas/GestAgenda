@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +8,7 @@ class Customer extends Model
     //
     protected $table = 'Customers';
     protected $primaryKey = 'idCustomers';
-    public $timestamps = false;
+    public $timestamps = true;
     protected $fillable = [
         'idCustomers',
         'nameCustomers',        
@@ -17,6 +16,7 @@ class Customer extends Model
         'addressCustomers',
         'createdCustomers',
         'updatedCustomers',
+        'profile_photo',
         'idUsers', // Assuming this is the foreign key to the Users table
     ];
     public function user()
