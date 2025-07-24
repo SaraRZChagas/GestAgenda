@@ -7,6 +7,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
+
 const mainClientNavItems: NavItem[] = [
     {
         title: 'Dashboard',
@@ -16,24 +17,41 @@ const mainClientNavItems: NavItem[] = [
 ];
 
 const mainProfessionalNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/professional/dashboard',
-        icon: LayoutGrid,
-    },
+     {
+    title: 'Topo',
+    href: '/professional/dashboard',
+    icon: LayoutGrid,
+  },
+  {
+    title: 'Regras de Agendamento',
+    href: '/professional/dashboard#scheduling-rules',
+    icon: BookOpen,
+  },
+  {
+    title: 'Serviços Oferecidos',
+    href: '/professional/dashboard#service-manager',
+    icon: Folder,
+  },
+  {
+    title: 'Histórico de Atendimentos',
+    href: '/professional/dashboard#appointment-history',
+    icon: LayoutGrid, // ou outro ícone como Clock, Calendar, etc.
+  },
 ];
 
+
+
 const footerNavItems: NavItem[] = [
-    // {
-    //     title: 'Repository',
-    //     href: 'https://github.com/laravel/react-starter-kit',
-    //     icon: Folder,
-    // },
-    // {
-    //     title: 'Documentation',
-    //     href: 'https://laravel.com/docs/starter-kits#react',
-    //     icon: BookOpen,
-    // },
+    {
+        title: 'Repository',
+        href: 'https://github.com/laravel/react-starter-kit',
+        icon: Folder,
+    },
+    {
+        title: 'Documentation',
+        href: 'https://laravel.com/docs/starter-kits#react',
+        icon: BookOpen,
+    },
 ];
 
 export function AppSidebar() {

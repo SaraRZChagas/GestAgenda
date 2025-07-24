@@ -23,9 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/professional/dashboard', fn () => Inertia::render('professional/dashboard'))->name('professional.dashboard');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('professional')->name('professional.')
-->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');    
+Route::middleware(['auth', 'verified'])->prefix('professional')->name('professional.')->group(function () {
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('/scheduling-rules', [SchedulingRuleController::class, 'index'])->name('scheduling-rules.index');
     Route::get('/appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');

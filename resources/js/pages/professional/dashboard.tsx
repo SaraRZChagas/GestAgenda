@@ -57,12 +57,17 @@ export default function Dashboard() {
           <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
         </div>
       </div>
-      <div className="flex flex-col gap-8 p-6">
-        <SchedulingRules />
-        <ServiceManager />
-        <AppointmentHistory />
-      </div>
-
+     <div className="flex flex-col gap-8 p-6">
+  <div id="scheduling-rules">
+    <SchedulingRules />
+  </div>
+  <div id="service-manager">
+    <ServiceManager />
+  </div>
+  <div id="appointment-history">
+    <AppointmentHistory />
+  </div>
+</div>
     </AppLayout>
   );
 }

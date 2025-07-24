@@ -47,13 +47,25 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function professional()
+
+        public function professional()
+    {
+        return $this->hasOne(Professional::class, 'idUsers', 'id'); // supondo que há idUsers em professionals
+    }
+
+            public function customer()
         {
-            return $this->hasOne(Professional::class, 'idusers');
+            return $this->hasOne(Customer::class, 'idUsers', 'id');
         }
 
-    public function customer()
-        {
-            return $this->hasOne(Customer::class, 'idusers');
-        }
-}
+        public function isProfessional(): bool
+    {
+        return $this->role === 'professional';
+    }
+
+        public function isCustomer(): bool
+    {
+        return $this->role === 'client';
+    }
+
+};

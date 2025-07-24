@@ -1,13 +1,16 @@
 <?php
 
+// app/Models/Service.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    protected $primaryKey = 'idServices'; // pois o campo de ID tem nome diferente
-    public $incrementing = true;
+    protected $table = 'Services';
+    protected $primaryKey = 'idServices';
+    public $timestamps = true;
 
     protected $fillable = [
         'idProfessionals',
@@ -16,11 +19,19 @@ class Service extends Model
         'descriptionServices',
         'priceServices',
         'durationMinutesServices',
-        'isActiveServices'
+        'isActiveServices',
+        'createdServices',
+        'updatedServices',
     ];
 
     public function professional()
     {
-        return $this->belongsTo(Professional::class, 'idProfessionals', 'idProfessionals');
+        return $this->belongsTo(Professional::class, 'idProfessionals');
     }
+    public function serviceType()
+    {
+        return $this->belongsTo(ServiceType::class, 'idServicesTypes');
+    }
+
+  
 }
