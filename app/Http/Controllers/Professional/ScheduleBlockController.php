@@ -17,7 +17,7 @@ class ScheduleBlockController extends Controller
 
         return Inertia::render('professional/schedule-blocks', [
             'blocks' => ScheduleBlock::where('idProfessionals', $professionalId)
-                        ->with('type')
+                        ->with('blockType')
                         ->get(),
             'types' => ScheduleBlockType::all(),
         ]);
