@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Professional;
-
+ 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreServiceRequest;
 use App\Models\Service;
@@ -43,13 +43,14 @@ class ServiceController extends Controller
 
 {
     
-    Log::info('FILES', $request->allFiles());
+                //Log::info('FILES', $request->allFiles());
 
-    if ($request->hasFile('profile_photo')) {
-    \Log::info('Arquivo recebido', [$request->file('profile_photo')]);
-} else {
-    \Log::info('Nenhum arquivo recebido');
-}
+              // Verifica se o usuário enviou uma foto de perfil
+        //if ($request->hasFile('profile_photo')) {
+          //      \Log::info('Arquivo recebido', [$request->file('profile_photo')]);
+            //} else {
+              //  \Log::info('Nenhum arquivo recebido');
+            //}
     
     $professional = Auth::user()->professional; // Obtém o profissional associado ao usuário autenticado
     $data = $request->validated();
@@ -57,6 +58,7 @@ class ServiceController extends Controller
         return back()->withErrors(['msg' => 'Profissional não encontrado.']);
     }
 
+  
     $profilePhotoPath = null;
 
 
@@ -79,22 +81,18 @@ class ServiceController extends Controller
         'updated_at' => Carbon::now(),
     ]);
 
-    return redirect()->route('professional.services.index') 
+    return to_route('professional.services.index')
         ->with('success', 'Serviço criado com sucesso!');
 }
 
-    public function update(StoreServiceRequest $request, Service $service)
-    {
-       
+public function update(StoreServiceRequest $request, Service $service)
+{
+    $data = $request->validated();  
 
-        $data = $request->validated();
-        $data['updatedServices'] = Carbon::now();
+    $service->update($data);
 
-
-        $service->update($data);
-
-        return back()->with('success', 'Serviço atualizado com sucesso!');
-    }
+    return back()->with('success', 'Serviço atualizado com sucesso.');
+}
 
     public function destroy(Service $service)
     {

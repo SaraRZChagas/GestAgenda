@@ -55,10 +55,18 @@ export interface Service {
   updated_at: string | null;
   profile_photo?: string; // URL da foto do serviço
   cover_photo?: string; // URL da foto de capa do serviço
+  serviceType?: ServicesType; // Relação com o tipo de serviço
+  nameServicesTypes?: string; // Nome da categoria, se necessário
   
+   
 }
 
 
+interface ServicesType {
+  idServicesTypes: number;
+  nameServicesTypes: string;
+
+}
 
 
 // Tipagem global de dados compartilhados via Inertia (ex: user)

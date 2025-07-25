@@ -1,12 +1,11 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type PageProps, type Service } from '@/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Router } from 'vendor/tightenco/ziggy/src/js';
+
 
 
 interface Props extends PageProps {
@@ -38,18 +37,23 @@ export default function ServicesPage({ services, serviceTypes, breadcrumbs }: Pr
     priceServices: string;
     durationMinutesServices: string;
     isActiveServices: boolean;
-    idServicesTypes: string; // categoria
-    profile_photo: File | null; // imagem
+    idServicesTypes: number | undefined; // categoria
+    profile_photo: File | null; // imagem 
+    
+    // Outros campos que você possa precisar
+    nameServicesTypes?: string; // Nome da categoria, se necessário
+ 
   }
 
-  const { data, setData, post, processing, reset } = useForm<ServiceFormData>({
+  const { data, setData, post, processing, reset,put } = useForm<ServiceFormData>({
     nameServices: '',
     descriptionServices: '',
     priceServices: '',
     durationMinutesServices: '',
     isActiveServices: true,
-    idServicesTypes: '',
+    idServicesTypes: undefined, // categoria
     profile_photo: null,
+    nameServicesTypes: '', // Nome da categoria, se necessário
   });
 
 
@@ -61,37 +65,66 @@ export default function ServicesPage({ services, serviceTypes, breadcrumbs }: Pr
   }));
   // Carregar os tipos de serviços
 
- const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
 
   if (data.idServices) {
-    // Use the put method from useForm, which expects a URL string
-    // @ts-ignore
-    put(route('professional.services.update', data.idServices), {
-      preserveScroll: true,
-      onSuccess: () => reset(),
-    });
+    // Atualizar
+       console.log('Dados do serviço:', data);
+      //console.log('Enviando atualização para ID:', data.idServices);
+   put(route('professional.services.update', data.idServices), {
+  preserveScroll: true,
+  //forceFormData: true, // Se você estiver enviando arquivos, mantenha isso como true
+  onSuccess: () => {
+    reset(
+      'nameServices',
+      'descriptionServices',
+      'priceServices',
+      'durationMinutesServices',
+      'isActiveServices',
+      'idServicesTypes',
+      'profile_photo',
+      'nameServicesTypes'
+    );
+    setData('idServices', undefined); // limpa o modo edição
+  },
+   onError: (errors) => {
+    console.error('Erro na atualização:', errors);
+  },
+});
   } else {
-    console.log('Categoria selecionada:', data.idServicesTypes);
+    // Criar
+    console.log('Enviando criação de serviço:', data);
+    {services.map((service) => {
+  console.log(service); // <- Veja o formato completo
+  return (
+    <div key={service.idServices}>
+      <p>Nome: {service.nameServices}</p>
+      <p>Categoria: {service.serviceType?.nameServicesTypes ?? 'Sem categoria'}</p>
+    </div>
+  );
+})}
     post(route('professional.services.store'), {
       preserveScroll: true,
-      forceFormData: true, // importante para enviar arquivo
+      forceFormData: true,
       onSuccess: () => reset(),
       onError: (errors) => {
-    console.error('Erro na validação:', errors);
-  }
+        console.error('Erro na criação:', errors);
+      },
     });
   }
 };
-  const handleEdit = (service: Service) => {
+const handleEdit = (service: Service) => {
   setData({
-    nameServices: service.nameServices,
-    descriptionServices: service.descriptionServices,
-    priceServices: String(service.priceServices),
-    durationMinutesServices: String(service.durationMinutesServices),
+    idServices: service.idServices,
+    nameServices: service.nameServices ?? '',
+    descriptionServices: service.descriptionServices ?? '',
+    priceServices: String(service.priceServices ?? ''),
+    durationMinutesServices: String(service.durationMinutesServices ?? ''),
     isActiveServices: service.isActiveServices,
-    idServicesTypes: String(service.idServicesTypes),
-    profile_photo: null, // Reset the file input
+    idServicesTypes: service.idServicesTypes ?? undefined,
+    profile_photo: null,
+    nameServicesTypes: service.nameServicesTypes ?? ''   // Nome da categoria, se necessário
   });
 };
 
@@ -174,7 +207,7 @@ const handleDelete = (id: number) => {
                 <select
                   id="idServicesTypes"
                   value={data.idServicesTypes}
-                  onChange={(e) => setData('idServicesTypes', e.target.value)}
+                  onChange={(e) => setData('idServicesTypes', e.target.value === '' ? undefined : Number(e.target.value))}
                   className="mt-1 w-full rounded border px-2 py-1"
                 >
                   <option value="">Selecione uma categoria</option>
@@ -197,9 +230,25 @@ const handleDelete = (id: number) => {
               </div>
 
 
-              <Button type="submit" disabled={processing}>
-                Criar Serviço
-              </Button>
+             <div className="flex gap-2">
+  <Button type="submit" disabled={processing}>
+    {data.idServices ? 'Atualizar Serviço' : 'Criar Serviço'}
+  </Button>
+
+  {data.idServices && (
+    <Button
+      variant="outline"
+      type="button"
+      onClick={() => {
+        reset();
+        setData('idServices', undefined);
+      }}
+    >
+      Cancelar Edição
+    </Button>
+  )}
+</div>
+
             </form>
           </CardContent>
         </Card>
@@ -214,36 +263,43 @@ const handleDelete = (id: number) => {
 
             
 
-            {(services ?? []).map((service) => (
-              <div key={service.idServices} className="border-b pb-2 space-y-1">
-                <p className="font-medium">{service.nameServices}</p>
-                <p className="text-sm text-muted-foreground">
-                  {service.descriptionServices} | {service.durationMinutesServices} min | €{service.priceServices} | {service.profile_photo && (
-  <img
-    src={`/storage/${service.profile_photo}`}
-    alt={service.nameServices}
-    className="w-20 h-20 object-cover rounded"
-  />
-)}
-                </p>
-                <div className="flex gap-2 mt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(service)}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(service.idServices)}
-                  >
-                    Deletar
-                  </Button>
-                </div>
-              </div>
-            ))}
+         {(services ?? []).map((service) => (
+  <div key={service.idServices} className="border-b pb-2 space-y-1">
+    <p className="font-medium">{service.nameServices}</p>
+
+    <p className="text-sm text-muted-foreground">
+      {service.descriptionServices} | {service.durationMinutesServices} min | €{service.priceServices}
+      <br />
+      Categoria: <strong>{service.nameServicesTypes}</strong>
+    </p>
+
+    {service.profile_photo && (
+      <img
+        src={`/storage/${service.profile_photo}`}
+        alt={service.nameServices}
+        className="w-20 h-20 object-cover rounded"
+      />
+    )}
+
+    <div className="flex gap-2 mt-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handleEdit(service)} // 
+      >
+        Editar
+      </Button>
+      <Button
+        variant="destructive"
+        size="sm"
+        onClick={() => handleDelete(service.idServices)}
+      >
+        Deletar
+      </Button>
+    </div>
+  </div>
+))}
+
           </CardContent>
         </Card>
       </div>

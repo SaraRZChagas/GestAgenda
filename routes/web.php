@@ -8,52 +8,71 @@ use App\Http\Controllers\Professional\DashboardController;
 use App\Http\Controllers\Professional\ServiceController;
 use App\Http\Controllers\Professional\SchedulingRuleController;
 use App\Http\Controllers\Professional\AppointmentController;
-
+use App\Http\Controllers\Professional\ScheduleBlockController;
+use App\Http\Controllers\Professional\WorkingHourController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/client/dashboard', fn () => Inertia::render('client/dashboard'))->name('client.dashboard');
-    Route::get('/professional/dashboard', fn () => Inertia::render('professional/dashboard'))->name('professional.dashboard');
-});
-
-Route::middleware(['auth', 'verified'])->prefix('professional')->name('professional.')
-->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');    
-    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
-    Route::get('/scheduling-rules', [SchedulingRuleController::class, 'index'])->name('scheduling-rules.index');
-    Route::get('/appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');
-    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
-});
-
-
-Route::middleware(['auth', 'verified'])->prefix('professional')->name('professional.')->group(function () {
-    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
-    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
-    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
-    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
-});
-
-
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
-Route::post('/services', [ServiceController::class, 'store'])->name('professional.services.store');
-
-Route::put('/services/{service}', [ServiceController::class, 'update'])->name('professional.services.update');
-
-
-Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('professional.services.destroy');
-
-
-Route::get('/services/types', [ServiceController::class, 'getServiceTypes'])->name('services.types');
 Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
-Route::get('/profissional/{username}/servicos', [PublicProfileController::class, 'services'])->name('professional.services');
-Route::get('/services/types', [ServiceController::class, 'getServiceTypes'])->name('services.types');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboards
+    Route::get('/client/dashboard', fn () => Inertia::render('client/dashboard'))->name('client.dashboard');
+    //Route::get('/professional/dashboard', fn () => Inertia::render('professional/dashboard'))->name('professional.dashboard');
+    Route::get('/professional/dashboard', [DashboardController::class, 'index'])->name('professional.dashboard');
+
+    // Rotas do profissional
+    Route::prefix('professional')->name('professional.')->group(function () {
+        // Serviços
+        //Route::get('/services', [ServiceController::class, 'index'])->name('services.index');           
+        Route::get('/services/types', [ServiceController::class, 'getServiceTypes'])->name('services.types');
+        Route::resource('services', ServiceController::class);
+
+        // Regras de agendamento
+        Route::get('/scheduling-rules', [SchedulingRuleController::class, 'index'])->name('scheduling-rules.index');
+
+        // Horários de trabalho
+        Route::get('/working-hours', [WorkingHourController::class, 'index'])->name('working-hours.index');
+        Route::post('/working-hours', [WorkingHourController::class, 'store'])->name('working-hours.store');
+        Route::put('/working-hours/{id}', [WorkingHourController::class, 'update'])->name('working-hours.update');
+        Route::delete('/working-hours/{id}', [WorkingHourController::class, 'destroy'])->name('working-hours.destroy');
+
+        // Histórico de atendimentos
+        Route::get('/appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');
+
+        // Bloqueios de agenda
+        Route::get('schedule-blocks', [ScheduleBlockController::class, 'index'])->name('schedule-blocks.index');
+        Route::post('schedule-blocks', [ScheduleBlockController::class, 'store'])->name('schedule-blocks.store');
+        Route::post('schedule-blocks/types', [ScheduleBlockController::class, 'storeType'])->name('schedule-blocks.storeType');
 
 
-Route::resource('services', ServiceController::class)->except(['create', 'show', 'edit']);
+
+    });
+
+
+
+});   
+
+
+   
+
+
+
+
+
 
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+
+
+
+
+
+
+
+

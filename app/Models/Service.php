@@ -24,7 +24,8 @@ class Service extends Model
     'profile_photo',
     'cover_photo',
     'created_at',
-    'updated_at',     
+    'updated_at',    
+    'nameServicesTypes', // Adiciona o nome da categoria, se necessário  
        
     ];
 
@@ -33,10 +34,13 @@ class Service extends Model
     {
         return $this->belongsTo(Professional::class, 'idProfessionals');
     }
-    public function serviceType()
-    {
-        return $this->belongsTo(ServicesType::class, 'idServicesTypes');
-    }
+        public function serviceType()
+        {
+            return $this->belongsTo(ServicesType::class, 'idServicesTypes', 'idServicesTypes');
+        }
 
-  
+  public function getCategoryNameAttribute()
+    {
+        return $this->serviceType ? $this->serviceType->nameServicesTypes : 'Sem categoria';
+    }
 }

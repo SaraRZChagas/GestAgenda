@@ -22,5 +22,9 @@ class ServicesType extends Model
         return $this->hasMany(Service::class, 'idServicesTypes', 'idServicesTypes');
     }
     // Se precisar de um relacionamento inverso
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'idServicesTypes', 'idServicesTypes');
+    }
     
 }
