@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->prefix('professional')->name('professio
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
     Route::get('/scheduling-rules', [SchedulingRuleController::class, 'index'])->name('scheduling-rules.index');
     Route::get('/appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');
+    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
 });
 
 
@@ -35,9 +36,24 @@ Route::middleware(['auth', 'verified'])->prefix('professional')->name('professio
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 });
 
-Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::post('/services', [ServiceController::class, 'store'])->name('professional.services.store');
+
+Route::put('/services/{service}', [ServiceController::class, 'update'])->name('professional.services.update');
+
+
+Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('professional.services.destroy');
+
+
+Route::get('/services/types', [ServiceController::class, 'getServiceTypes'])->name('services.types');
 Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
+Route::get('/profissional/{username}/servicos', [PublicProfileController::class, 'services'])->name('professional.services');
+Route::get('/services/types', [ServiceController::class, 'getServiceTypes'])->name('services.types');
+
+
+Route::resource('services', ServiceController::class)->except(['create', 'show', 'edit']);
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

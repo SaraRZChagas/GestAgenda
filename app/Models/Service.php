@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Service extends Model
 {
     protected $table = 'Services';
@@ -13,16 +14,20 @@ class Service extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'idProfessionals',
-        'idServicesTypes',
-        'nameServices',
-        'descriptionServices',
-        'priceServices',
-        'durationMinutesServices',
-        'isActiveServices',
-        'createdServices',
-        'updatedServices',
+    'idProfessionals',
+    'idServicesTypes',
+    'nameServices',
+    'descriptionServices',
+    'priceServices',
+    'durationMinutesServices',
+    'isActiveServices',
+    'profile_photo',
+    'cover_photo',
+    'created_at',
+    'updated_at',     
+       
     ];
+
 
     public function professional()
     {
@@ -30,7 +35,7 @@ class Service extends Model
     }
     public function serviceType()
     {
-        return $this->belongsTo(ServiceType::class, 'idServicesTypes');
+        return $this->belongsTo(ServicesType::class, 'idServicesTypes');
     }
 
   

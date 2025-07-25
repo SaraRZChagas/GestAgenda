@@ -46,7 +46,7 @@ export default function ServiceManager() {
         <div className="pt-4">
           <h3 className="font-semibold">Serviços cadastrados</h3>
           {services.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nenhum serviço cadastrado ainda.</p>
+            <p className="text-sm text-muted-foreground">Nenhum serviço cadastrado ainda frontpage.</p>
           ) : (
             <ul className="list-disc pl-6 mt-2">
               {services.map((s, i) => (

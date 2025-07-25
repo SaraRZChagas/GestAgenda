@@ -16,11 +16,12 @@ class StoreServiceRequest extends FormRequest
     {
         return [
             'nameServices' => 'required|string|max:45',
-            'descriptionServices' => 'nullable|string|max:500',
-            'priceServices' => 'required|numeric|min:0',
-            'durationMinutesServices' => 'required|integer|min:1',
-            'idServicesTypes' => 'nullable|exists:ServicesTypes,idServicesTypes',
-            'isActiveServices' => 'nullable|boolean',
+    'descriptionServices' => 'nullable|string|max:500',
+    'priceServices' => 'required|numeric|min:0',
+    'durationMinutesServices' => 'required|integer|min:1',
+    'isActiveServices' => 'required|boolean',
+    'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    'idServicesTypes' => 'required|exists:servicestypes,idServicesTypes',
         ];
     }
 }
