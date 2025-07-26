@@ -3,6 +3,7 @@ import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import React from 'react';
 
 
+
 export default function Welcome() {
   const { data, setData, post, processing, errors } = useForm({
     name: '',

@@ -57,9 +57,23 @@ export interface Service {
   priceServices: string;
   durationMinutesServices: number;
   isActiveServices: boolean;
-  createdServices: string | null;
-  updatedServices: string | null;
+  ccreated_at: string | null;
+  updated_at: string | null;
+  profile_photo?: string; // URL da foto do serviço
+  cover_photo?: string; // URL da foto de capa do serviço
+  serviceType?: ServicesType; // Relação com o tipo de serviço
+  nameServicesTypes?: string; // Nome da categoria, se necessário
+  
+   
 }
+
+
+interface ServicesType {
+  idServicesTypes: number;
+  nameServicesTypes: string;
+
+}
+
 
 // Tipagem global de dados compartilhados via Inertia (ex: user)
 export interface PageProps<T = Record<string, unknown>> {
@@ -75,3 +89,5 @@ export interface PageProps<T = Record<string, unknown>> {
   // props específicos da página
   data?: T;
 }
+
+

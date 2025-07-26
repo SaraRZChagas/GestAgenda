@@ -30,10 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rotas do profissional
     Route::prefix('professional')->name('professional.')->group(function () {
         // Serviços
-        Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
-        Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
-        Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
-        Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+        //Route::get('/services', [ServiceController::class, 'index'])->name('services.index');           
+        Route::get('/services/types', [ServiceController::class, 'getServiceTypes'])->name('services.types');
+        Route::resource('services', ServiceController::class);
 
         // Regras de agendamento
         Route::get('/scheduling-rules', [SchedulingRuleController::class, 'index'])->name('scheduling-rules.index');
@@ -58,3 +57,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+
+
+
+
+
+
+
+
