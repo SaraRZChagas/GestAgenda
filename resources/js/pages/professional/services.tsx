@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 
 
+
 interface Props extends PageProps {
 
 
@@ -29,6 +30,7 @@ interface ServiceType {
 
 
 export default function ServicesPage({ services, serviceTypes, breadcrumbs }: Props) {
+  
   interface ServiceFormData {
     idServices?: number;
     [key: string]: string | boolean | File | null | undefined | number;
@@ -100,7 +102,7 @@ const handleSubmit = (e: React.FormEvent) => {
   return (
     <div key={service.idServices}>
       <p>Nome: {service.nameServices}</p>
-      <p>Categoria: {service.serviceType?.nameServicesTypes ?? 'Sem categoria'}</p>
+      <p>Categoria: {service.service_type?.nameServicesTypes ?? 'Sem categoria'}</p>
     </div>
   );
 })}
@@ -270,7 +272,7 @@ const handleDelete = (id: number) => {
     <p className="text-sm text-muted-foreground">
       {service.descriptionServices} | {service.durationMinutesServices} min | €{service.priceServices}
       <br />
-      Categoria: <strong>{service.nameServicesTypes}</strong>
+      Categoria: <strong>{service.service_type?.nameServicesTypes}</strong>
     </p>
 
     {service.profile_photo && (

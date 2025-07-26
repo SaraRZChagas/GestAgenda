@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\ServicesType; 
+use Illuminate\Support\Facades\Log;
 
 
 class ServiceController extends Controller
@@ -42,15 +43,17 @@ class ServiceController extends Controller
    public function store(StoreServiceRequest $request)
 
 {
-    
-                //Log::info('FILES', $request->allFiles());
+                foreach ($request->allFiles() as $key => $file) {
+    \Log::info("Arquivo encontrado no campo: {$key}", [$file]);
+}
 
-              // Verifica se o usuário enviou uma foto de perfil
-        //if ($request->hasFile('profile_photo')) {
-          //      \Log::info('Arquivo recebido', [$request->file('profile_photo')]);
-            //} else {
-              //  \Log::info('Nenhum arquivo recebido');
-            //}
+
+             //Verifica se o usuário enviou uma foto de perfil
+        if ($request->hasFile('profile_photo')) {
+               \Log::info('Arquivo recebido', [$request->file('profile_photo')]);
+            } else {
+                \Log::info('Nenhum arquivo recebido');
+            }
     
     $professional = Auth::user()->professional; // Obtém o profissional associado ao usuário autenticado
     $data = $request->validated();
