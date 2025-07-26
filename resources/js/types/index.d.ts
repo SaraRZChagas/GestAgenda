@@ -28,6 +28,12 @@ export interface SharedData {
     auth: Auth;
     ziggy: Config & { location: string };
     sidebarOpen: boolean;
+    userExtraData?: {
+        phoneCustomers?: string;
+        phoneProfessionals?: string;
+        addressCustomers?: string;
+        addressProfessionals?: string;
+    };
     [key: string]: unknown;
 }
 

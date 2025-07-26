@@ -34,3 +34,4 @@ class ScheduleBlock extends Model
         return $this->belongsTo(ScheduleBlockType::class, 'idScheduleBlocksTypes', 'idScheduleBlocksTypes');
     }
 }
+

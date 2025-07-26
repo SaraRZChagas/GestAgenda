@@ -10,22 +10,22 @@ class Professional extends Model
     public $timestamps = true;
 
     protected $fillable = [
-      'idProfessionals',
+
            'nameProfessionals',
            'bioProfessionals',
-           'addressProfessionals,
-           phoneProfessionals',
+           'addressProfessionals',
+           'phoneProfessionals',
             'nameBusinessProfessionals',
-            'createdProfessionals',
-            'updatedProfessionals',
+            'created_at',
+            'updated_at',
             'profile_photo',
            'idUsers', 
     ];
 
     public function services()
-{
-    return $this->hasMany(Service::class, 'idProfessionals');
-}
+    {
+        return $this->hasMany(Service::class, 'idProfessionals');
+    }
     public function workingHour()
     {
         return $this->hasMany(WorkingHour::class, 'idProfessionals');
@@ -33,7 +33,6 @@ class Professional extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'idUsers', 'id'); // Assuming 'idUsers' is the foreign key in Professionals table
+        return $this->belongsTo(User::class, 'idUsers', 'id'); 
     }
-
 }

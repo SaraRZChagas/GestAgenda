@@ -24,6 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Route::get('/professional/dashboard', fn () => Inertia::render('professional/dashboard'))->name('professional.dashboard');
     Route::get('/professional/dashboard', [DashboardController::class, 'index'])->name('professional.dashboard');
 
+    Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+
     // Rotas do profissional
     Route::prefix('professional')->name('professional.')->group(function () {
         // Serviços
@@ -48,6 +51,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('schedule-blocks', [ScheduleBlockController::class, 'index'])->name('schedule-blocks.index');
         Route::post('schedule-blocks', [ScheduleBlockController::class, 'store'])->name('schedule-blocks.store');
         Route::post('schedule-blocks/types', [ScheduleBlockController::class, 'storeType'])->name('schedule-blocks.storeType');
+        Route::delete('/professional/schedule-blocks/{id}', [ScheduleBlockController::class, 'destroy'])->name('professional.schedule-blocks.destroy');
+        Route::put('/professional/schedule-blocks/{id}', [ScheduleBlockController::class, 'update'])->name('professional.schedule-blocks.update');
     });
 });
 

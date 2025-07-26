@@ -53,4 +53,27 @@ class ScheduleBlockController extends Controller
             'type' => $type
         ]);
     }
+
+    public function destroy($id)
+    {
+        $block = ScheduleBlock::findOrFail($id);
+        $block->delete();
+
+        return back()->with('success', 'Bloqueio excluído com sucesso!');
+    }
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'startDatetimeScheduleBlocks' => 'required|date',
+            'endDatetimeScheduleBlocks'   => 'required|date|after:startDatetimeScheduleBlocks',
+            'idScheduleBlocksTypes'       => 'required|exists:ScheduleBlocksTypes,idScheduleBlocksTypes',
+            'descriptionScheduleBlocks'   => 'nullable|string|max:100',
+        ]);
+
+        $block = ScheduleBlock::findOrFail($id);
+        $block->update($validated);
+
+        return back()->with('success', 'Bloqueio atualizado com sucesso!');
+    }
 }
+

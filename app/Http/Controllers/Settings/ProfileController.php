@@ -18,9 +18,16 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+
+        $user->load(['customer', 'professional']);
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'userExtraData' => $user->role === 'client'
+                ? $user->customer
+                : $user->professional,
         ]);
     }
 
@@ -28,17 +35,39 @@ class ProfileController extends Controller
      * Update the user's profile settings.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
+        {
+            $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+            $user->fill($request->only(['name', 'email']));
+
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+
+            $user->save();
+
+            // Atualiza os dados extras
+            if ($user->role === 'client') {
+                $user->customer()?->update([
+                    'phoneCustomers' => $request->input('phone'),
+                    'addressCustomers' => $request->input('address'),
+                ]);
+            } elseif ($user->role === 'professional') {
+                $user->professional()?->update([
+                    'phoneProfessionals' => $request->input('phone'),
+                    'addressProfessionals' => $request->input('address'),
+                ]);
+            }
+
+            if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+            $user->save();
         }
 
-        $request->user()->save();
+            return to_route('profile.edit')->with('status', 'profile-updated');
+        }
 
-        return to_route('profile.edit');
-    }
 
     /**
      * Delete the user's account.

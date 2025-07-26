@@ -37,28 +37,40 @@ const formatDateTime = (datetime: string) => {
 };
 
 export default function ScheduleBlocksPage({ blocks, types }: ScheduleBlocksPageProps) {
-  const { data, setData, post, processing, reset } = useForm({
+  const { data, setData, post, put, processing, reset } = useForm({
     startDatetimeScheduleBlocks: '',
     endDatetimeScheduleBlocks: '',
     idScheduleBlocksTypes: '',
     descriptionScheduleBlocks: '',
   });
 
-  
+  const { delete: destroy } = useForm();
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const [localTypes, setLocalTypes] = useState<ScheduleBlockType[]>(types);
   const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    post(route('professional.schedule-blocks.store'), { onSuccess: () => reset() });
-  };
+    if (editingId) {
+      put(route('professional.schedule-blocks.update', editingId), {
+        onSuccess: () => {
+          reset();
+          setEditingId(null);
+        },
+      });
+    } else {
+      post(route('professional.schedule-blocks.store'), {
+        onSuccess: () => reset(),
+      });
+    }
+  }
 
   const handleTypeCreated = (newType: ScheduleBlockType) => {
     setLocalTypes([...localTypes, newType]);
     setData('idScheduleBlocksTypes', String(newType.idScheduleBlocksTypes));
   };
-
+  
   return (
     <AppLayout>
       <Head title="Bloqueios de Agenda" />
@@ -110,9 +122,23 @@ export default function ScheduleBlocksPage({ blocks, types }: ScheduleBlocksPage
                 onChange={(e) => setData('descriptionScheduleBlocks', e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={processing}>
-              Salvar Bloqueio
+           <Button type="submit" disabled={processing}>
+              {editingId ? 'Atualizar Bloqueio' : 'Salvar Bloqueio'}
             </Button>
+
+            {editingId && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  reset();
+                  setEditingId(null);
+                }}
+                className="ml-2"
+              >
+                Cancelar Edição
+              </Button>
+            )}
           </form>
         </div>
 
@@ -136,10 +162,30 @@ export default function ScheduleBlocksPage({ blocks, types }: ScheduleBlocksPage
                   <td className="p-3 border">{h.block_type?.nameScheduleBlocksTypes}</td>
                   <td className="p-3 border">{h.descriptionScheduleBlocks}</td>
                   <td className="p-3 border flex gap-2">
-                    <Button size="sm" onClick={() => {}}>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setEditingId(h.idScheduleBlocks);
+                        setData({
+                          startDatetimeScheduleBlocks: h.startDatetimeScheduleBlocks,
+                          endDatetimeScheduleBlocks: h.endDatetimeScheduleBlocks,
+                          idScheduleBlocksTypes: String(h.idScheduleBlocksTypes),
+                          descriptionScheduleBlocks: h.descriptionScheduleBlocks || '',
+                        });
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
                       Editar
                     </Button>
-                    <Button size="sm" variant="destructive" onClick={() => {}}>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => {
+                        if (confirm('Tem certeza que deseja excluir este bloqueio?')) {
+                          destroy(route('professional.schedule-blocks.destroy', h.idScheduleBlocks));
+                        }
+                      }}
+                    >
                       Excluir
                     </Button>
                   </td>

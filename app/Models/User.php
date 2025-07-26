@@ -48,22 +48,30 @@ class User extends Authenticatable
         ];
     }
 
-        public function professional()
+    public function professional()
     {
-        return $this->hasOne(Professional::class, 'idUsers', 'id'); // supondo que há idUsers em professionals
+                $returnRelationship = $this->hasOne(Professional::class, 'idUsers', 'id'); 
+        \Log::info('Accessing Custormer:', [
+            'professional' => $returnRelationship,
+        ]);
+        return $returnRelationship;
     }
 
-            public function customer()
-        {
-            return $this->hasOne(Customer::class, 'idUsers', 'id');
-        }
+    public function customer()
+    {
+        $returnRelationship = $this->hasOne(Customer::class, 'idUsers', 'id');
+        \Log::info('Accessing Custormer:', [
+            'customer' => $returnRelationship,
+        ]);
+        return $returnRelationship;
+    }
 
-        public function isProfessional(): bool
+    public function isProfessional(): bool
     {
         return $this->role === 'professional';
     }
 
-        public function isCustomer(): bool
+    public function isCustomer(): bool
     {
         return $this->role === 'client';
     }

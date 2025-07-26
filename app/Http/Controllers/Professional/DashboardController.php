@@ -18,7 +18,9 @@ class DashboardController
             ->where('idProfessionals', $professionalId)
             ->get();
 
-        $workingHours = WorkingHour::where('idProfessionals', $professionalId)->get();
+        $workingHours = WorkingHour::where('idProfessionals', $professionalId)
+            ->get();
+            
             
         return Inertia::render('professional/dashboard', [
             'breadcrumbs' => [

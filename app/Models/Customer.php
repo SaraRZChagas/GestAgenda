@@ -10,17 +10,17 @@ class Customer extends Model
     protected $primaryKey = 'idCustomers';
     public $timestamps = true;
     protected $fillable = [
-        'idCustomers',
+        
         'nameCustomers',        
         'phoneCustomers',
         'addressCustomers',
-        'createdCustomers',
-        'updatedCustomers',
+        'created_at',
+        'updated_at',
         'profile_photo',
         'idUsers', // Assuming this is the foreign key to the Users table
     ];
     public function user()
     {
-        return $this->belongsTo(User::class, 'idUsers', 'id'); // Assuming 'idUsers' is the foreign key in Customers table
+        return $this->belongsTo(User::class, 'idUsers', 'id'); 
     }
 }

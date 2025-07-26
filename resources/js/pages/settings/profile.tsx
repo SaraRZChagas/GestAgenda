@@ -1,7 +1,7 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState  } from 'react';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
@@ -22,21 +22,38 @@ const breadcrumbs: BreadcrumbItem[] = [
 type ProfileForm = {
     name: string;
     email: string;
+    phone: string;
+    address: string;
+    avatar?: File | null;
 };
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
-    const { auth } = usePage<SharedData>().props;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
-        name: auth.user.name,
-        email: auth.user.email,
-    });
+   const { auth, userExtraData } = usePage<{ auth: SharedData['auth']; userExtraData: any }>().props;
+
+    const initialPhone =
+    userExtraData?.phoneCustomers ?? userExtraData?.phoneProfessionals ?? '';
+
+    const initialAddress =
+    userExtraData?.addressCustomers ?? userExtraData?.addressProfessionals ?? '';
+    const [preview, setPreview] = useState<string | null>(auth.user.avatar ?? null);
+
+    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<ProfileForm>({
+    name: auth.user.name,
+    email: auth.user.email,
+    phone: initialPhone,
+    address: initialAddress,
+    avatar: null,
+});
+
+    console.log(userExtraData)
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
         patch(route('profile.update'), {
             preserveScroll: true,
+            forceFormData: true,
         });
     };
 
@@ -103,6 +120,52 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 )}
                             </div>
                         )}
+                        {/* Campo de Telefone */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="phone">Telefone</Label>
+                            <Input
+                                id="phone"
+                                type="text"
+                                className="mt-1 block w-full"
+                                value={data.phone}
+                                onChange={(e) => setData('phone', e.target.value)}
+                                required
+                                placeholder="(00) 00000-0000"
+                            />
+                            <InputError className="mt-2" message={errors.phone} />
+                        </div>
+                        {/* Upload de Avatar */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="avatar">Foto de Perfil</Label>
+                            <Input
+                                id="avatar"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0] ?? null;
+                                    setData('avatar', file);
+
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = () => setPreview(reader.result as string);
+                                        reader.readAsDataURL(file);
+                                    }
+                                }}
+                            />
+                            {preview && <img src={preview} alt="Pré-visualização" className="mt-2 w-24 h-24 rounded-full object-cover" />}
+                            <InputError className="mt-2" message={errors.avatar} />
+                        </div>
+                    <div className="grid gap-2">
+                            <Label htmlFor="address">Endereço</Label>
+                            <Input
+                                id="address"
+                                className="mt-1 block w-full"
+                                value={data.address}
+                                onChange={(e) => setData('address', e.target.value)}
+                                placeholder="Endereço completo"
+                            />
+                            <InputError className="mt-2" message={errors.address} />
+                        </div>
 
                         <div className="flex items-center gap-4">
                             <Button disabled={processing}>Save</Button>

@@ -64,20 +64,19 @@ export default function Register() {
                         <InputError message={errors.name} className="mt-2" />
                     </div>
                     <div>
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">Telefone</Label>
                         <Input
                             id="phone"
+                            name="phone"
                             type="text"
                             required
-                            autoFocus
-                            tabIndex={1}
-                            autoComplete="phone"
+                            tabIndex={2}
                             value={data.phone}
                             onChange={(e) => setData('phone', e.target.value)}
                             disabled={processing}
-                            placeholder="Phone"
+                            placeholder="000000000"
                         />
-                        <InputError message={errors.name} className="mt-2" />
+                        <InputError message={errors.phone} className="mt-2" />
                     </div>
 
                     <div className="grid gap-2">
@@ -86,7 +85,7 @@ export default function Register() {
                             id="email"
                             type="email"
                             required
-                            tabIndex={2}
+                            tabIndex={3}
                             autoComplete="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
@@ -105,6 +104,7 @@ export default function Register() {
                             id="username"
                             type="text"
                             required
+                            tabIndex={4}
                             placeholder="ex: joaotreinador"
                             value={data.username}
                             onChange={(e) => setData('username', e.target.value)}
@@ -121,6 +121,7 @@ export default function Register() {
                         <Input
                             id="profile_photo"
                             type="file"
+                            tabIndex={5}
                             accept="image/*"
                             onChange={(e) => { console.log(e); setData('profile_photo', e.target.files?.[0] || null); }}
                             disabled={processing}
@@ -134,7 +135,7 @@ export default function Register() {
                             id="password"
                             type="password"
                             required
-                            tabIndex={3}
+                            tabIndex={6}
                             autoComplete="new-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
@@ -150,7 +151,7 @@ export default function Register() {
                             id="password_confirmation"
                             type="password"
                             required
-                            tabIndex={4}
+                            tabIndex={7}
                             autoComplete="new-password"
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
@@ -165,6 +166,7 @@ export default function Register() {
                         <input
                             type="radio"
                             name="role"
+                            tabIndex={8}
                             value="client"
                             checked={data.role === 'client'}
                             onChange={(e) => setData('role', e.target.value)}
@@ -174,6 +176,7 @@ export default function Register() {
                     <label className="ml-4">
                         <input
                             type="radio"
+                            tabIndex={9}
                             name="role"
                             value="professional"
                             checked={data.role === 'professional'}
@@ -183,7 +186,7 @@ export default function Register() {
                     </label>
                 </div>
 
-                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
+                    <Button type="submit" className="mt-2 w-full" tabIndex={10} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Criar conta
                     </Button>
@@ -191,7 +194,7 @@ export default function Register() {
 
                 <div className="text-center text-sm text-muted-foreground">
                     Já tem uma conta?{' '}
-                    <TextLink href={route('login')} tabIndex={6}>
+                    <TextLink href={route('login')} tabIndex={11}>
                         Log in
                     </TextLink>
                 </div>

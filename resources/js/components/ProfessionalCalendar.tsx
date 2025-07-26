@@ -16,10 +16,13 @@ interface ScheduleBlock {
   startDatetimeScheduleBlocks: string;
   endDatetimeScheduleBlocks: string;
   descriptionScheduleBlocks?: string;
-  block_type?: ScheduleBlockType;
+  blockType: {
+    name: string;
+    colorScheduleBlocksTypes?: string;
+  };
 }
-
 interface WorkingHour {
+  idWorkingHours: number;
   dayOfWeek: number; // 0=Domingo ... 6=Sábado
   startTime: string; // ex: "08:00"
   endTime: string;   // ex: "18:00"
@@ -30,6 +33,7 @@ interface ProfessionalCalendarProps {
   workingHours: WorkingHour[];
 }
 
+export type { ScheduleBlock, WorkingHour };
 export default function ProfessionalCalendar({ blocks, workingHours }: ProfessionalCalendarProps) {
   // Converter horários de trabalho em um map (para acesso rápido)
   const workingHoursMap = new Map<number, { start: string; end: string }>();
@@ -54,68 +58,78 @@ export default function ProfessionalCalendar({ blocks, workingHours }: Professio
   // Criar eventos de bloqueio manual
   const blockEvents = blocks.map((b) => ({
     id: `block-${b.idScheduleBlocks}`,
-    title: b.block_type?.nameScheduleBlocksTypes || 'Bloqueio',
+    title: b.blockType?.name || 'Bloqueio',
     start: new Date(b.startDatetimeScheduleBlocks),
     end: new Date(b.endDatetimeScheduleBlocks),
     allDay: false,
-    color: b.block_type?.colorScheduleBlocksTypes || '#f8d7da',
+    color: b.blockType?.colorScheduleBlocksTypes || '#f8d7da',
   }));
 
   // Criar eventos de horários fora da disponibilidade (vermelho claro)
   const generateUnavailableEvents = (start: Date, end: Date) => {
-    const events = [];
-    const current = new Date(start);
-    while (current < end) {
-      const next = new Date(current);
-      next.setDate(current.getDate() + 1);
+  const events = [];
+  const current = new Date(start);
 
-      const working = workingHoursMap.get(current.getDay());
-      if (!working) {
-        // Dia inteiro bloqueado
+  while (current <= end) {
+    const day = current.getDay(); // 0 = Domingo, 6 = Sábado
+    const working = workingHoursMap.get(day);
+
+    const dayStart = new Date(current);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(current);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    if (!working) {
+      //  Bloquear o dia todo
+      events.push({
+        id: `unavailable-all-${current.toDateString()}`,
+        title: 'Fora do horário de trabalho',
+        start: new Date(dayStart),
+        end: new Date(dayEnd),
+        color: '#F5F5F5',
+        textColor: '#FF0000',
+      });
+    } else {
+      const [startHour, startMinute] = working.start.split(':').map(Number);
+      const [endHour, endMinute] = working.end.split(':').map(Number);
+
+      const workStart = new Date(current);
+      workStart.setHours(startHour, startMinute, 0, 0);
+
+      const workEnd = new Date(current);
+      workEnd.setHours(endHour, endMinute, 0, 0);
+
+      // Bloquear antes do expediente
+      if (dayStart < workStart) {
         events.push({
-          id: `unavailable-${current.toDateString()}`,
+          id: `unavailable-before-${current.toDateString()}`,
           title: 'Fora do horário de trabalho',
-          start: new Date(current),
-          end: new Date(next),
-          allDay: false,
-          color: '#f8d7da',
+          start: new Date(dayStart),
+          end: new Date(workStart),
+          color: '#F5F5F5',
+          textColor: '#FF0000',
         });
-      } else {
-        // Antes do horário de trabalho
-        const [startHour, startMinute] = working.start.split(':').map(Number);
-        const [endHour, endMinute] = working.end.split(':').map(Number);
-        const dayStart = new Date(current);
-        dayStart.setHours(0, 0, 0, 0);
-        const workStart = new Date(current);
-        workStart.setHours(startHour, startMinute, 0, 0);
-        const workEnd = new Date(current);
-        workEnd.setHours(endHour, endMinute, 0, 0);
-        const dayEnd = new Date(current);
-        dayEnd.setHours(23, 59, 59, 999);
-
-        if (dayStart < workStart) {
-          events.push({
-            id: `unavailable-am-${current.toDateString()}`,
-            title: 'Fora do horário de trabalho',
-            start: dayStart,
-            end: workStart,
-            color: '#f8d7da',
-          });
-        }
-        if (workEnd < dayEnd) {
-          events.push({
-            id: `unavailable-pm-${current.toDateString()}`,
-            title: 'Fora do horário de trabalho',
-            start: workEnd,
-            end: dayEnd,
-            color: '#f8d7da',
-          });
-        }
       }
-      current.setDate(current.getDate() + 1);
+
+      // Bloquear depois do expediente
+      if (workEnd < dayEnd) {
+        events.push({
+          id: `unavailable-after-${current.toDateString()}`,
+          title: 'Fora do horário de trabalho',
+          start: new Date(workEnd),
+          end: new Date(dayEnd),
+          color: '#F5F5F5',
+          textColor: '#FF0000',
+        });
+      }
     }
-    return events;
-  };
+
+    current.setDate(current.getDate() + 1);
+  }
+
+  return events;
+};
+
 
   const startRange = moment().startOf('month').toDate();
   const endRange = moment().add(2, 'months').endOf('month').toDate();
@@ -126,9 +140,11 @@ export default function ProfessionalCalendar({ blocks, workingHours }: Professio
 
   // Definir estilos
   const eventStyleGetter = (event: any) => {
-    const backgroundColor = event.color || '#3174ad';
-    return { style: { backgroundColor } };
-  };
+  const backgroundColor = event.color || '#3174ad';
+  const color = event.textColor || '#000'; // define cor do texto, ou um padrão
+
+  return { style: { backgroundColor, color } };
+};
 
   return (
     <div className="h-[700px]">
@@ -146,4 +162,5 @@ export default function ProfessionalCalendar({ blocks, workingHours }: Professio
       />
     </div>
   );
+  
 }

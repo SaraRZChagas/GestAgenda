@@ -49,17 +49,19 @@ export function AppSidebar() {
     ];
 
     const footerNavItems: NavItem[] = [
-        {
-            title: 'Sua Página Pública',
-            href: `${window.location.origin}/profissional/${username}`,
-            icon: Folder,
-        },
-        {
-            title: 'Home do GestAgenda',
-            href: window.location.origin,
-            icon: BookOpen,
-        },
-    ];
+            ...(role === 'professional'
+                ? [{
+                    title: 'Sua Página Pública',
+                    href: `${window.location.origin}/profissional/${username}`,
+                    icon: Folder,
+                }]
+                : []),
+            {
+                title: 'Home do GestAgenda',
+                href: window.location.origin,
+                icon: BookOpen,
+            },
+        ];
 
     const getRouteForRole = (route: string): string => `/${role}${route}`;
 
@@ -78,12 +80,14 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={role === 'cliente' ? mainClientNavItems : mainProfessionalNavItems} />
+                <NavMain items={role === 'client' ? mainClientNavItems : mainProfessionalNavItems} />
+                
             </SidebarContent>
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
+                
             </SidebarFooter>
         </Sidebar>
     );

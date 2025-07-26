@@ -20,3 +20,4 @@ class ScheduleBlockType extends Model
         return $this->hasMany(ScheduleBlock::class, 'idScheduleBlocksTypes', 'idScheduleBlocksTypes');
     }
 }
+

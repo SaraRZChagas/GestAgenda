@@ -48,24 +48,61 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
         ]);
 
+        \Log::info(' 1 Logging with:', [
+            'customer' => $user->customer,
+            'professional' => $user->professional,
+            'user' => $user,
+        ]);
+
+        $user->load('customer', 'professional'); 
+
+        \Log::info(' 2 Logging with:', [
+            'customer' => $user->customer,
+            'professional' => $user->professional,
+            'user' => $user,
+        ]);
+
         // Upload da imagem, se existir
         if ($request->hasFile('profile_photo')) {
             $folder = $request->role === 'professional' ? 'profissional_img' : 'cliente_img';
             $photoPath = $request->file('profile_photo')->store("images/{$folder}/{$request->username}", 'public');
         }
 
-        // Criar registro em clients ou professionals
-        if ($request->role === 'professional') {
-            $user->professional()->create([
+        \Log::info(' 3 Logging with:', [
+            'customer' => $user->customer,
+            'professional' => $user->professional,
+            'user' => $user,
+        ]);
+        // Criar ambos os registros relacionados
+
+        $user->professional()->updateOrCreate(
+            ['idUsers' => $user->id], 
+            [
+            'nameProfessionals' => $request->name,
             'phoneProfessionals' => $request->phone,
             'profile_photo' => $photoPath ?? null,
-            ]);
-        } else {
-            $user->client()->create([
-                'phoneCustomers' => $request->phone,
-                'profile_photo' => $photoPath ?? null,
-            ]);
-        }
+        ]);
+
+        \Log::info(' 4 Logging with:', [
+            'customer' => $user->customer,
+            'professional' => $user->professional,
+            'user' => $user,
+        ]);
+
+        $user->customer()->updateOrCreate(['idUsers' => $user->id], [
+            'nameCustomers' => $request->name,
+            'phoneCustomers' => $request->phone,
+            'profile_photo' => $photoPath ?? null,
+        ]);
+
+        $user->load('customer', 'professional'); 
+
+        \Log::info(' 5 Logging with:', [
+            'customer' => $user->customer,
+            'professional' => $user->professional,
+            'user' => $user,
+        ]);
+
         event(new Registered($user));
 
         Auth::login($user);
