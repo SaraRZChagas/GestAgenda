@@ -19,41 +19,84 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+type Contact ={
+    idContacts: number | null;
+    descContacts: string;
+    idContactsTypes: number;
+    isActiveContacts: boolean;
+}
 type ProfileForm = {
+    _method: string;
     name: string;
     email: string;
     phone: string;
     address: string;
     avatar?: File | null;
+    contacts: Contact[];
+    bioProfessionals: string;
+    nameBusinessProfessionals: string;
 };
 
-export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
-
-   const { auth, userExtraData } = usePage<{ auth: SharedData['auth']; userExtraData: any }>().props;
+export default function Profile({ mustVerifyEmail, status, userExtraData, contacts: initialContacts = [], contactTypes }: { mustVerifyEmail: boolean; status?: string; userExtraData: any; contacts: any; contactTypes: any; }) {
+console.log(userExtraData)
+   const { auth } = usePage<{ auth: SharedData['auth']; }>().props;
 
     const initialPhone =
-    userExtraData?.phoneCustomers ?? userExtraData?.phoneProfessionals ?? '';
+        userExtraData?.phoneCustomers ?? userExtraData?.phoneProfessionals ?? '';
 
     const initialAddress =
-    userExtraData?.addressCustomers ?? userExtraData?.addressProfessionals ?? '';
-    const [preview, setPreview] = useState<string | null>(auth.user.avatar ?? null);
+        userExtraData?.addressCustomers ?? userExtraData?.addressProfessionals ?? '';
+    const [preview, setPreview] = useState<string | null>(auth.user?.avatar || userExtraData?.profile_photo);
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<ProfileForm>({
-    name: auth.user.name,
-    email: auth.user.email,
-    phone: initialPhone,
-    address: initialAddress,
-    avatar: null,
-});
+    const { data, setData, post, errors, processing, recentlySuccessful } = useForm<ProfileForm>({
+        _method: 'put',
+        name: auth.user.name,
+        email: auth.user.email,
+        phone: initialPhone,
+        address: initialAddress,
+        avatar: null,
+        bioProfessionals: userExtraData?.bioProfessionals || '',
+        nameBusinessProfessionals: userExtraData?.nameBusinessProfessionals || '',
+        contacts: initialContacts.map((c: any) => ({
+            idContacts: c.idContacts,
+            descContacts: c.descContacts || '',
+            idContactsTypes: c.idContactsTypes || null,
+            isActiveContacts: c.isActiveContacts !== undefined ? c.isActiveContacts : true,
+        
+        })
+    ),});
 
+    function addContact() {
+        setData('contacts', [...data.contacts, { idContacts: null, idContactsTypes: 0, descContacts: '', isActiveContacts: true }]);
+    }
+
+    function updateContact(index: number, field: string, value: any) {
+        const updated = [...data.contacts];
+        updated[index] = { ...updated[index], [field]: value };
+        setData('contacts', updated);
+    }
+
+    function removeContact(index: number) {
+        const updated = [...data.contacts];
+        updated.splice(index, 1);
+        setData('contacts', updated);
+    }
+    console.log(auth)
     console.log(userExtraData)
+    console.log(data)
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'), {
+
+        console.log(data);
+        console.log(e);
+        post(route('profile.update', auth.user.id), {
             preserveScroll: true,
             forceFormData: true,
+            onBefore: (e) => {console.log(JSON.stringify(e.data)); return true;},
+            onFinish: (e) => {console.log(e); return true;},
+            onError: (e) => {console.log(e); return true;}, 
         });
     };
 
@@ -63,7 +106,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Profile information" description="Update your name and email address" />
+                    <HeadingSmall title="Profile information" description="Altere aqui as informações do seu perfil" />
 
                     <form onSubmit={submit} className="space-y-6">
                         <div className="grid gap-2">
@@ -72,6 +115,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             <Input
                                 id="name"
                                 className="mt-1 block w-full"
+                                defaultValue={data.name}
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
                                 required
@@ -82,6 +126,37 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             <InputError className="mt-2" message={errors.name} />
                         </div>
 
+                        {auth.user.role === 'professional' && (
+                        <>
+                            <div className="grid gap-2">
+                            <Label htmlFor="nameBusinessProfessionals">Nome do Negócio</Label>
+                            <Input
+                                id="nameBusinessProfessionals"
+                                className="mt-1 block w-full"
+                                value={data.nameBusinessProfessionals}
+                                onChange={(e) => setData('nameBusinessProfessionals', e.target.value)}
+                                maxLength={45}
+                                placeholder="Nome do seu negócio"
+                            />
+                            <InputError className="mt-2" message={errors.nameBusinessProfessionals} />
+                            </div>
+
+                            <div className="grid gap-2">
+                            <Label htmlFor="bioProfessionals">Biografia</Label>
+                            <textarea
+                                id="bioProfessionals"
+                                className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                                value={data.bioProfessionals}
+                                onChange={(e) => setData('bioProfessionals', e.target.value)}
+                                maxLength={1024}
+                                placeholder="Conte um pouco sobre você"
+                                rows={4}
+                            />
+                            <InputError className="mt-2" message={errors.bioProfessionals} />
+                            </div>
+                        </>
+                        )}
+
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email address</Label>
 
@@ -89,6 +164,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 id="email"
                                 type="email"
                                 className="mt-1 block w-full"
+                                defaultValue={data.email}
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 required
@@ -134,6 +210,48 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             />
                             <InputError className="mt-2" message={errors.phone} />
                         </div>
+                        {/* Lista dinâmica de contatos: */}
+                        <div>
+                            <h3 className="font-semibold mb-2">Contatos</h3>
+                            {data.contacts.map((contact, i) => (
+                            <div key={i} className="flex gap-2 mb-2 items-center">
+                                <select
+                                className="border rounded p-1"
+                                value={contact.idContactsTypes ?? ''}
+                                onChange={e => updateContact(i, 'idContactsTypes', Number(e.target.value))}
+                                required
+                                >
+                                <option value="" disabled>Tipo de contato</option>
+                                {contactTypes.map((ct: any) => (
+                                    <option key={ct.idContactsTypes} value={ct.idContactsTypes}>{ct.nameContactsTypes}</option>
+                                ))}
+                                </select>
+
+                                <input
+                                type="text"
+                                value={contact.descContacts}
+                                onChange={e => updateContact(i, 'descContacts', e.target.value)}
+                                placeholder="Contato, URL ou número"
+                                className="border rounded p-1 flex-grow"
+                                required
+                                />
+
+                                <button
+                                type="button"
+                                onClick={() => removeContact(i)}
+                                className="text-red-600 font-bold"
+                                aria-label="Remover contato"
+                                >
+                                ×
+                                </button>
+                            </div>
+                            ))}
+
+                            <Button type="button" onClick={addContact}>Adicionar contato</Button>
+                        </div>
+                        
+
+
                         {/* Upload de Avatar */}
                         <div className="grid gap-2">
                             <Label htmlFor="avatar">Foto de Perfil</Label>
@@ -144,7 +262,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] ?? null;
                                     setData('avatar', file);
-
+                                    console.log(file);
                                     if (file) {
                                         const reader = new FileReader();
                                         reader.onload = () => setPreview(reader.result as string);

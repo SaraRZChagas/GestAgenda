@@ -10,6 +10,7 @@ use App\Http\Controllers\Professional\SchedulingRuleController;
 use App\Http\Controllers\Professional\AppointmentController;
 use App\Http\Controllers\Professional\ScheduleBlockController;
 use App\Http\Controllers\Professional\WorkingHourController;
+use App\Http\Controllers\ProfileSwitchController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -17,6 +18,8 @@ Route::get('/', function () {
 
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
+
+Route::middleware(['auth'])->post('/profile-switch', [ProfileSwitchController::class, 'switchProfile'])->name('profile.switch');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboards
@@ -50,8 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('schedule-blocks', [ScheduleBlockController::class, 'index'])->name('schedule-blocks.index');
         Route::post('schedule-blocks', [ScheduleBlockController::class, 'store'])->name('schedule-blocks.store');
         Route::post('schedule-blocks/types', [ScheduleBlockController::class, 'storeType'])->name('schedule-blocks.storeType');
-        Route::delete('/professional/schedule-blocks/{id}', [ScheduleBlockController::class, 'destroy'])->name('professional.schedule-blocks.destroy');
-        Route::put('/professional/schedule-blocks/{id}', [ScheduleBlockController::class, 'update'])->name('professional.schedule-blocks.update');
+        Route::delete('schedule-blocks/{id}', [ScheduleBlockController::class, 'destroy'])->name('schedule-blocks.destroy');
+        Route::put('schedule-blocks/{id}', [ScheduleBlockController::class, 'update'])->name('schedule-blocks.update');
     });
 });
 
