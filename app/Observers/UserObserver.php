@@ -11,11 +11,11 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        if ($user->role === 'professional') {
-            $user->professional()->create([]);
-        } elseif ($user->role === 'client') {
-            $user->customer()->create([]);
-        }
+        // if ($user->role === 'professional') {
+        //     $user->professional()->create([]);
+        // } elseif ($user->role === 'client') {
+        //     $user->customer()->create([]);
+        // }
     }
 
     /**

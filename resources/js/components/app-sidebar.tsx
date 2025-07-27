@@ -11,8 +11,8 @@ import { Button } from '@/components/ui/button';
 
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
-    const username = auth.user.username;
-    const role = auth.user.role;
+    const username = auth.user?.username;
+    const role = auth.user?.role;
 
     const switchProfileNavItem: NavItem = {
         title: role === 'professional' ? 'Ir para Perfil Cliente' : 'Ir para Perfil Profissional',
@@ -40,6 +40,13 @@ export function AppSidebar() {
             href: '/professional/dashboard',
             icon: LayoutGrid,
         },
+
+        {
+            title: 'Marcações',
+            href: route('professional.appointments.index'),
+            icon: Clock,
+        },
+
         {
             title: 'Horário de Trabalho',
             href: '/professional/working-hours',
@@ -55,6 +62,13 @@ export function AppSidebar() {
             href: '/professional/services',
             icon: Folder,
         },
+
+        {
+            title: 'Cadastro Rápido de Cliente',
+            href: '/professional/quick-client',
+            icon: Folder,
+        },
+
         {
             title: 'Histórico de Atendimentos',
             href: '/professional/appointments/history',
@@ -100,6 +114,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={role === 'client' ? mainClientNavItems : mainProfessionalNavItems} />
+                {/* Botão para troca de perfil logo abaixo da navegação principal */}
                 
             </SidebarContent>
 

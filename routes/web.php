@@ -12,6 +12,7 @@ use App\Http\Controllers\Professional\ScheduleBlockController;
 use App\Http\Controllers\Professional\WorkingHourController;
 use App\Http\Controllers\ProfileSwitchController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Professional\ProfessionalQuickClientController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -39,6 +40,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         //Route::get('/services', [ServiceController::class, 'index'])->name('services.index');           
         Route::get('/services/types', [ServiceController::class, 'getServiceTypes'])->name('services.types');
         Route::resource('services', ServiceController::class);
+    
+        // Rotas do profissional
+        Route::post('/quick-client', [ProfessionalQuickClientController::class, 'store'])->name('quick-client.store');
+        Route::get('/quick-client', function () {    return Inertia::render('professional/quick-client');})->name('quick-client.form');
 
         // Regras de agendamento
         Route::get('/scheduling-rules', [SchedulingRuleController::class, 'index'])->name('scheduling-rules.index');
@@ -51,6 +56,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Histórico de atendimentos
         Route::get('/appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');
+
+        // Marcações (appointments) - REST completo
+        Route::resource('appointments', AppointmentController::class);
+
+        // Rota para validar horário disponível (opcional)
+        Route::post('appointments/validate', [AppointmentController::class, 'validateSchedule'])->name('appointments.validate');
 
         // Bloqueios de agenda
         Route::get('schedule-blocks', [ScheduleBlockController::class, 'index'])->name('schedule-blocks.index');
