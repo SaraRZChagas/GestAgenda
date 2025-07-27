@@ -24,11 +24,17 @@ class Professional extends Model
 
     public function services()
     {
-        return $this->hasMany(Service::class, 'idProfessionals');
+        return $this->hasMany(Service::class, 'idProfessionals', 'idProfessionals');
     }
-    public function workingHour()
+
+    public function scheduleBlocks() 
+    {   
+        return $this->hasMany(ScheduleBlock::class, 'idProfessionals', 'idProfessionals'); 
+    }
+
+    public function workingHours()
     {
-        return $this->hasMany(WorkingHour::class, 'idProfessionals');
+        return $this->hasMany(WorkingHour::class, 'idProfessionals', 'idProfessionals');
     }
 
     public function contacts()

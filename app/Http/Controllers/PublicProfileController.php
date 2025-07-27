@@ -11,40 +11,54 @@ class PublicProfileController extends Controller
     public function show($username)
     {
         $user = User::where('username', $username)
-                ->with(['professional.services'])
-                ->firstOrFail();
+            ->with([
+                'professional.services',
+                'professional.workingHours',
+                'professional.contacts.contactType',
+                'professional.scheduleBlocks.blockType',
+            ])
+            ->firstOrFail();
 
-    $professional = Professional::whereHas('user', function ($query) use ($username) {
-    $query->where('username', $username);
-})->with('services')->firstOrFail();
+        $professional = $user->professional;
 
-    // Montar horários formatados
-    $hoursFormatted = $professional?->workingHours?->map(function ($h) {
-        $days = [
-            1 => 'Seg', 2 => 'Ter', 3 => 'Qua', 4 => 'Qui', 5 => 'Sex', 6 => 'Sáb', 0 => 'Dom'
-        ];
-        return ($days[$h->weekdayWorkingHours] ?? $h->weekdayWorkingHours) .
-            ' ' . substr($h->startTimeWorkingHours, 0, 5) .
-            ' - ' . substr($h->endTimeWorkingHours, 0, 5);
-    })->join(', ');
+    // Montar horários formatados de forma legível
+        $days = [0 => 'Dom', 1 => 'Seg', 2 => 'Ter', 3 => 'Qua', 4 => 'Qui', 5 => 'Sex', 6 => 'Sáb'];
+        $hoursFormatted = $professional?->workingHours?->map(function ($h) use ($days) {
+            // Substitua os campos conforme seu modelo
+            return ($days[$h->weekdayWorkingHours ?? $h->dayOfWeek] ?? $h->weekdayWorkingHours) . ' ' .
+                substr($h->startTimeWorkingHours ?? $h->startTime, 0, 5) . ' - ' .
+                substr($h->endTimeWorkingHours ?? $h->endTime, 0, 5);
+        })->join(', ');
+
+        // Montar contatos formatados (ex: "Telefone: 123456", "Instagram: @usuario")
+        $contacts = $professional?->contacts?->map(function ($c) {
+            $type = optional($c->contactType)->nameContactsTypes ?? 'Contato';
+            return $type . ': ' . $c->descContacts;
+        })->filter()->values() ?? collect();
 
     $profile = [
-        'name'        => $user->name,
+        'name' => $professional->nameBusinessProfessionals ?: $user->name,
         'description' => $professional->bioProfessionals ?? '',
-        'address'     => $professional->addressProfessionals ?? '',
-        'profile_photo'       => env('APP_URL').'/storage/'.($professional->profile_photo ?? ''),
-        'workingHours'=> $hoursFormatted,
-        'contacts'    => $professional ? array_filter([$professional->phoneProfessionals]) : [],
-        'services'    => $professional?->services->map(function ($service) {
+        'address' => $professional->addressProfessionals ?? '',
+        'profile_photo' => $professional->profile_photo 
+            ? env('APP_URL') . '/storage/' . $professional->profile_photo 
+            : '/images/avatar_placeholder.svg',
+        'workingHours' => $hoursFormatted ?: 'Não informado',
+        'contacts' => $contacts->toArray(),
+        'services' => $professional?->services?->map(function ($service) {
             return [
-                'id'          => $service->idServices,
-                'name'        => $service->nameServices,
+                'id' => $service->idServices,
+                'name' => $service->nameServices,
                 'description' => $service->descriptionServices,
-                'price'       => $service->priceServices,
-                'duration'    => $service->durationMinutesServices . ' minutos',
-                'image'       => '/images/placeholder.png', // ajustar quando houver imagem
-            ];
-        }) ?? [],
+                'price' => number_format($service->priceServices, 2, ',', '.'), // exemplo formatação R$
+                'duration' => ($service->durationMinutesServices ?? '?') . ' minutos',
+                'image' => $service->profile_photo 
+                    ? asset('storage/' . $service->profile_photo) 
+                    : '/images/placeholder.png',
+                ];
+        })->toArray() ?? [],
+        'blocks' => $professional->scheduleBlocks ?? [],
+        'workingHoursArray' => $professional->workingHours ?? [],
     ];
 
     return Inertia::render('PublicProfile', [

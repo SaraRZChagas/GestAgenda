@@ -1,10 +1,11 @@
-import { type SharedData } from '@/types';
-import { Head, Link, usePage, useForm } from '@inertiajs/react';
+import type { SharedData } from '@/types';
+import { Head, Link, usePage, useForm, router } from '@inertiajs/react';
 import React from 'react';
 
 
 
 export default function Welcome() {
+  const { auth } = usePage<SharedData>().props;
   const { data, setData, post, processing, errors } = useForm({
     name: '',
     email: '',
@@ -20,54 +21,70 @@ const successMessage = (props as any)?.flash?.success;
     post('/contact');
   };
   return (
+
     <>
       <Head title="GestAgenda" />
     <div className="bg-[#4D73A1] text-white min-h-screen">
       {/* Navbar */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-[#4D73A1] flex justify-between items-center px-8 py-6 mx-auto">
-        <div className="flex items-center gap-3">
+      <header className="fixed top-0 left-0 w-full z-50 bg-[#4D73A1] px-4 sm:px-8 py-4 flex flex-wrap items-center justify-between gap-y-4 shadow">
+        <div className="flex items-center gap-3 flex-shrink-0">
           <img src="/images/logo.svg" alt="Logo" className="h-10" />
           <h1
-            className="text-[48px] tracking-[5%]"
+            className="font-bold text-2xl sm:text-3xl md:text-[40px] tracking-wide"
             style={{ fontFamily: 'Guttman Logo 1' }}
           >
             GestAgenda
           </h1>
         </div>
-        <nav className="flex flex-wrap gap-4 font-light text-white text-[24px] justify-end">
-          <a href="#produto" className={`${location.hash === '#produto' ? 'text-[#C4C4C4] text-[28px] font-medium' : 'text-white text-[24px]'}`}>Produto</a>
+        <nav className="flex flex-wrap w-full sm:w-auto gap-2 sm:gap-5 md:gap-8 font-light text-white text-lg sm:text-xl md:text-2xl items-center justify-end">
+          <Link
+            href="/#produto"
+            className={`${
+              window.location.hash === '#produto'
+                ? 'text-[#C4C4C4] font-medium'
+                : 'text-white'
+            }`}
+          >Produto</Link>
           <Link
             href="/#planos"
             className={`${
               window.location.hash === '#planos'
-                ? 'text-[#C4C4C4] text-[28px] font-medium'
-                : 'text-white text-[24px]'
+                ? 'text-[#C4C4C4] font-medium'
+                : 'text-white'
             }`}
           >Planos</Link>
           <Link
             href="/#contacto"
-            className={`${
-              window.location.hash === '#contacto'
-                ? 'text-[#C4C4C4] text-[28px] font-medium'
-                : 'text-white text-[24px]'
-            }`}
+              className={`${
+                window.location.hash === '#contacto'
+                  ? 'text-[#C4C4C4] font-medium'
+                  : 'text-white'
+              }`}
           >Contacto</Link>
-          <Link
-            href="/login"
-            className={`${
-              route().current('login')
-                ? 'text-[#C4C4C4] text-[28px] font-medium'
-                : 'text-white text-[24px]'
-            }`}
-          >Login</Link>
-          <Link
-            href="/register"
-            className={`${
-              route().current('register')
-                ? 'text-[#C4C4C4] text-[28px] font-medium'
-                : 'text-white text-[24px]'
-            }`}
-          >Registo</Link>
+
+          {auth?.user ? (
+            <>
+              <Link href="/logout" method="post" as="button" className="text-white cursor-pointer bg-transparent border-none p-0 hover:text-[#C4C4C4]">
+                Logout
+              </Link>
+
+              <Link
+                href={auth.user.role === 'professional' ? '/professional/dashboard' : '/client/dashboard'}
+                className="text-white hover:text-[#C4C4C4]"
+              >
+                Dashboard
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-white hover:text-[#C4C4C4]">
+                Login
+              </Link>
+              <Link href="/register" className="text-white hover:text-[#C4C4C4]">
+                Registo
+              </Link>
+            </>
+          )}
         </nav>
       </header>
 
@@ -111,7 +128,8 @@ const successMessage = (props as any)?.flash?.success;
               <br />
               *Agenda interna: visível apenas para você
             </p>
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">Adesão</button>
+            <button onClick={() => router.visit('/register')}  className="bg-blue-500 text-white px-4 py-2 rounded"> Adesão </button>
+            
           </div>
 
           {/* Plano Profissional */}

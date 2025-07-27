@@ -39,7 +39,7 @@ export default function ServicesPage({ services, serviceTypes, breadcrumbs }: Pr
     priceServices: string;
     durationMinutesServices: string;
     isActiveServices: boolean;
-    idServicesTypes: number | undefined; // categoria
+    idServicesTypes: number | string; // categoria
     profile_photo: File | null; // imagem 
     
     // Outros campos que você possa precisar
@@ -53,7 +53,7 @@ export default function ServicesPage({ services, serviceTypes, breadcrumbs }: Pr
     priceServices: '',
     durationMinutesServices: '',
     isActiveServices: true,
-    idServicesTypes: undefined, // categoria
+    idServicesTypes: '', // categoria
     profile_photo: null,
     nameServicesTypes: '', // Nome da categoria, se necessário
   });
@@ -109,7 +109,8 @@ const handleSubmit = (e: React.FormEvent) => {
     post(route('professional.services.store'), {
       preserveScroll: true,
       forceFormData: true,
-      onSuccess: () => reset(),
+      onSuccess: () => {reset();
+        setData('idServices', undefined);},
       onError: (errors) => {
         console.error('Erro na criação:', errors);
       },
@@ -124,7 +125,7 @@ const handleEdit = (service: Service) => {
     priceServices: String(service.priceServices ?? ''),
     durationMinutesServices: String(service.durationMinutesServices ?? ''),
     isActiveServices: service.isActiveServices,
-    idServicesTypes: service.idServicesTypes ?? undefined,
+    idServicesTypes: service.idServicesTypes ?? '',
     profile_photo: null,
     nameServicesTypes: service.nameServicesTypes ?? ''   // Nome da categoria, se necessário
   });
@@ -209,7 +210,7 @@ const handleDelete = (id: number) => {
                 <select
                   id="idServicesTypes"
                   value={data.idServicesTypes}
-                  onChange={(e) => setData('idServicesTypes', e.target.value === '' ? undefined : Number(e.target.value))}
+                  onChange={(e) => setData('idServicesTypes', e.target.value === '' ? '' : Number(e.target.value))}
                   className="mt-1 w-full rounded border px-2 py-1"
                 >
                   <option value="">Selecione uma categoria</option>

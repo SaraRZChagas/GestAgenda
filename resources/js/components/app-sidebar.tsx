@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Clock, Calendar } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Clock, Calendar, Repeat } from 'lucide-react';
 import AppLogo from './app-logo';
 import { router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,18 @@ export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const username = auth.user.username;
     const role = auth.user.role;
+
+    const switchProfileNavItem: NavItem = {
+        title: role === 'professional' ? 'Ir para Perfil Cliente' : 'Ir para Perfil Profissional',
+        icon: Repeat,
+        action: () => {
+            router.post(route('profile.switch'), {}, {
+                onError: (errors) => {
+                    alert('Erro ao trocar perfil.');
+                },
+            });
+        },
+    };
 
     const mainClientNavItems: NavItem[] = [
         {
@@ -58,6 +70,9 @@ export function AppSidebar() {
                     icon: Folder,
                 }]
                 : []),
+
+            switchProfileNavItem,
+
             {
                 title: 'Home do GestAgenda',
                 href: window.location.origin,
@@ -67,14 +82,7 @@ export function AppSidebar() {
 
     const getRouteForRole = (route: string): string => `/${role}${route}`;
 
-    const switchProfile = () => {
-        router.post(route('profile.switch'), {}, {
-            onError: (errors) => {
-            console.error('Erro ao trocar perfil:', errors);
-            alert('Não foi possível trocar o perfil. Tente novamente.');
-            },
-        });
-        };
+    
 
     return (
         <Sidebar collapsible="icon" variant="sidebar" className="[&_*]:text-[#4E76AB]">
@@ -92,12 +100,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={role === 'client' ? mainClientNavItems : mainProfessionalNavItems} />
-                {/* Botão para troca de perfil logo abaixo da navegação principal */}
-                <div className="p-4">
-                    <Button variant="outline" className="w-full" onClick={switchProfile}>
-                        {role === 'professional' ? 'Ir para Perfil Cliente' : 'Ir para Perfil Profissional'}
-                    </Button>
-                </div>
+                
             </SidebarContent>
 
             <SidebarFooter>

@@ -2,7 +2,7 @@ import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
-    user: User;
+    user?: User | null;
 }
 
 export interface BreadcrumbItem {
@@ -17,9 +17,10 @@ export interface NavGroup {
 
 export interface NavItem {
     title: string;
-    href: string;
+    href?: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    action?: () => void;
 }
 
 export interface SharedData {

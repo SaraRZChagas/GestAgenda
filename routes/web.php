@@ -11,10 +11,13 @@ use App\Http\Controllers\Professional\AppointmentController;
 use App\Http\Controllers\Professional\ScheduleBlockController;
 use App\Http\Controllers\Professional\WorkingHourController;
 use App\Http\Controllers\ProfileSwitchController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
