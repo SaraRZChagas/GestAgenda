@@ -61,7 +61,7 @@ export interface Service {
   updated_at: string | null;
   profile_photo?: string; // URL da foto do serviço
   cover_photo?: string; // URL da foto de capa do serviço
-  serviceType?: ServicesType; // Relação com o tipo de serviço
+  service_type?: ServicesType; // Relação com o tipo de serviço
   nameServicesTypes?: string; // Nome da categoria, se necessário
   
    

@@ -36,11 +36,8 @@ class Service extends Model
     }
         public function serviceType()
         {
-            return $this->belongsTo(ServicesType::class, 'idServicesTypes', 'idServicesTypes');
+            return $this->hasOne(ServicesType::class, 'idServicesTypes', 'idServicesTypes');
         }
 
-  public function getCategoryNameAttribute()
-    {
-        return $this->serviceType ? $this->serviceType->nameServicesTypes : 'Sem categoria';
-    }
+  
 }

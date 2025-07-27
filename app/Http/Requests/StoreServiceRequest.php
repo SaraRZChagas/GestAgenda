@@ -19,8 +19,7 @@ class StoreServiceRequest extends FormRequest
     'descriptionServices' => 'nullable|string|max:500',
     'priceServices' => 'required|numeric|min:0',
     'durationMinutesServices' => 'required|integer|min:1',
-    'isActiveServices' => 'required|boolean',
-    'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    'isActiveServices' => 'required|boolean',    
     'idServicesTypes' => 'required|exists:servicestypes,idServicesTypes',
         ];
     }
