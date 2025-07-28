@@ -33,6 +33,19 @@ export function AppSidebar() {
             href: '/client/dashboard',
             icon: LayoutGrid,
         },
+
+        {
+            title: 'Próximas Marcações',
+            href: route('client.appointments.future'),
+            icon: Clock
+        },
+
+        {
+            title: 'Histórico de Marcações',
+            href: route('client.appointments.past'),
+            icon: ChartLine
+        },
+
     ];
 
     const mainProfessionalNavItems: NavItem[] = [

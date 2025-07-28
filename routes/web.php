@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileSwitchController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Professional\ProfessionalQuickClientController;
 use App\Http\Controllers\Professional\ClientController;
+use \App\Http\Controllers\Client\ClientDashboardController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -25,6 +26,12 @@ Route::post('/contact', [ContactController::class, 'send'])->name('contact.send'
 Route::get('/profissional/{username}', [PublicProfileController::class, 'show']);
 
 Route::middleware(['auth'])->post('/profile-switch', [ProfileSwitchController::class, 'switchProfile'])->name('profile.switch');
+
+Route::middleware(['auth', 'verified'])->prefix('client')->name('client.')->group(function () {
+    Route::get('appointments/future', [ClientDashboardController::class, 'futureAppointments'])->name('appointments.future');
+    Route::get('appointments/past', [ClientDashboardController::class, 'pastAppointments'])->name('appointments.past');
+});
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboards

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class AppointmentController extends Controller
@@ -19,7 +20,10 @@ class AppointmentController extends Controller
     public function index()
     {
         $professional = auth()->user()->professional;
+        $now = Carbon::now();
+
         $appointments = Appointment::where('idProfessionals', $professional->idProfessionals)
+            ->where('endDatetimeAppointments', '>=', $now)       // filtro para futuras ou que ainda não terminaram
             ->with(['customer', 'service'])
             ->orderBy('startDatetimeAppointments')
             ->get();
@@ -50,8 +54,8 @@ class AppointmentController extends Controller
     public function validateSchedule(Request $request)
     {
         $validated = $request->validate([
-            'start' => 'required|date',
-            'end' => 'required|date|after:start',
+            'startDatetimeAppointments' => 'required|date',
+            'endDatetimeAppointments' => 'required|date|after:start',
             'idServices' => 'required|exists:services,idServices',
             // cliente pode ser opcional
         ]);
@@ -192,9 +196,12 @@ class AppointmentController extends Controller
         if ($appointment->idProfessionals !== $professional->idProfessionals) {
             abort(403);
         }
+        $professionalId = $professional->idProfessionals;
+        $services = $professional->services()->where('isActiveServices', true)->get();
 
-        $services = $professional->services()->where('isActive', true)->get();
-        $customers = Customer::where('idProfessionals', $professional->idProfessionals)->get();
+        $customers = Customer::whereHas('appointments', function ($query) use ($professionalId) {
+            $query->where('idProfessionals', $professionalId);
+        })->get();
 
         return Inertia::render('professional/appointments/Edit', [
             'appointment' => $appointment,
@@ -217,8 +224,8 @@ class AppointmentController extends Controller
             'idServices' => 'required|exists:services,idServices',
             'startDatetimeAppointments' => 'required|date',
             'endDatetimeAppointments' => 'required|date|after:startDatetimeAppointments',
-            'status' => ['required', Rule::in(['scheduled', 'cancelled'])],
-            'notes' => 'nullable|string|max:500',
+            'statusAppointments' => ['required', Rule::in(['scheduled', 'cancelled'])],
+            'notesAppointments' => 'nullable|string|max:500',
         ]);
 
         // Validar horários (pode reutilizar métodos privados)
@@ -229,8 +236,8 @@ class AppointmentController extends Controller
             'idServices' => $data['idServices'],
             'startDatetimeAppointments' => $data['startDatetimeAppointments'],
             'endDatetimeAppointments' => $data['endDatetimeAppointments'],
-            'status' => $data['status'],
-            'notes' => $data['notes'],
+            'statusAppointments' => $data['statusAppointments'],
+            'notesAppointments' => $data['notesAppointments'],
         ]);
 
         return to_route('professional.appointments.index')->with('success', 'Marcação atualizada!');
@@ -253,10 +260,12 @@ class AppointmentController extends Controller
     public function history(Request $request)
     {
         $professional = auth()->user()->professional;
+        $now = Carbon::now();
 
         $query = Appointment::where('idProfessionals', $professional->idProfessionals)
+            ->where('endDatetimeAppointments', '<', $now)    // marcações que já terminaram
             ->with(['customer', 'service'])
-            ->orderBy('startDatetimeAppointments', 'desc');
+            ->orderByDesc('startDatetimeAppointments');
 
         if ($request->filled('customer_id')) {
             $query->where('idCustomers', $request->customer_id);

@@ -23,8 +23,8 @@ type Appointment = {
   service?: { idServices: number; nameServices: string };
   startDatetimeAppointments: string;
   endDatetimeAppointments: string;
-  status: string;
-  notes?: string;
+  statusAppointments: string;
+  notesAppointments?: string;
 };
 
 
@@ -40,8 +40,8 @@ export default function Edit({ appointment, services, customers }: EditProps) {
     idServices: appointment.service?.idServices ?? '',
     startDatetimeAppointments: appointment.startDatetimeAppointments.slice(0, 16), // datetime-local needs this format
     endDatetimeAppointments: appointment.endDatetimeAppointments.slice(0, 16),
-    status: appointment.status || 'scheduled',
-    notes: appointment.notes || '',
+    statusAppointments: appointment.statusAppointments || 'scheduled',
+    notesAppointments: appointment.notesAppointments || '',
   });
 
   function submit(e: React.FormEvent) {
@@ -117,8 +117,8 @@ export default function Edit({ appointment, services, customers }: EditProps) {
           <Label htmlFor="status">Status</Label>
           <select
             id="status"
-            value={data.status}
-            onChange={e => setData('status', e.target.value)}
+            value={data.statusAppointments}
+            onChange={e => setData('statusAppointments', e.target.value)}
             className="w-full border rounded p-2"
             required
           >
@@ -127,19 +127,19 @@ export default function Edit({ appointment, services, customers }: EditProps) {
             <option value="completed">Concluído</option>
             <option value="no_show">Não compareceu</option>
           </select>
-          <InputError message={errors.status} />
+          <InputError message={errors.statusAppointments} />
         </div>
 
         <div>
           <Label htmlFor="notes">Notas</Label>
           <textarea
             id="notes"
-            value={data.notes}
-            onChange={e => setData('notes', e.target.value)}
+            value={data.notesAppointments}
+            onChange={e => setData('notesAppointments', e.target.value)}
             className="w-full border rounded p-2"
             rows={4}
           />
-          <InputError message={errors.notes} />
+          <InputError message={errors.notesAppointments} />
         </div>
 
         <div className="flex justify-between items-center">
