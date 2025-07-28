@@ -28,13 +28,24 @@ interface WorkingHour {
   endTime: string;   // ex: "18:00"
 }
 
+interface Appointment {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  allDay: boolean;
+  color?: string;
+  customerName?: string;
+}
+
 interface ProfessionalCalendarProps {
   blocks: ScheduleBlock[];
   workingHours: WorkingHour[];
+  appointments?: Appointment[];
 }
 
-export type { ScheduleBlock, WorkingHour };
-export default function ProfessionalCalendar({ blocks, workingHours }: ProfessionalCalendarProps) {
+export type { ScheduleBlock, WorkingHour, Appointment };
+export default function ProfessionalCalendar({ blocks, workingHours, appointments = [] }: ProfessionalCalendarProps) {
   // Converter horários de trabalho em um map (para acesso rápido)
   const workingHoursMap = new Map<number, { start: string; end: string }>();
   workingHours.forEach((w) => {
@@ -64,6 +75,7 @@ export default function ProfessionalCalendar({ blocks, workingHours }: Professio
     allDay: false,
     color: b.blockType?.colorScheduleBlocksTypes || '#f8d7da',
   }));
+  
 
   // Criar eventos de horários fora da disponibilidade (vermelho claro)
   const generateUnavailableEvents = (start: Date, end: Date) => {
@@ -136,12 +148,32 @@ export default function ProfessionalCalendar({ blocks, workingHours }: Professio
 
   const unavailableEvents = generateUnavailableEvents(startRange, endRange);
 
-  const allEvents = [...unavailableEvents, ...blockEvents];
+  //evento appointments
+  const appointmentEvents = (appointments ?? []).map((a) => ({
+    id: `appointment-${a.id}`,
+    title: `${a.title} (${a.customerName ?? ''})`,
+    start: new Date(a.start),
+    end: new Date(a.end),
+    allDay: a.allDay || false,
+    color: a.color || '#4caf50',  // verde por padrão
+  }));
+
+  const allEvents = [...unavailableEvents, ...blockEvents, ...appointmentEvents];
 
   // Definir estilos
   const eventStyleGetter = (event: any) => {
-  const backgroundColor = event.color || '#3174ad';
-  const color = event.textColor || '#000'; // define cor do texto, ou um padrão
+  let backgroundColor = event.color || '#3174ad';
+  let color = event.textColor || '#000'; // define cor do texto, ou um padrão
+    // Opcional: lógica para destacar eventos
+    if (String(event.id).startsWith('appointment-')) {
+      backgroundColor = event.color || '#4caf50';  // verde
+      color = '#fff';
+    } else if (String(event.id).startsWith('block-')) {
+      backgroundColor = event.color || '#f8d7da'; // rosa claro
+    } else if (String(event.id).startsWith('unavailable-')) {
+      backgroundColor = event.color || '#f5f5f5'; // cinza claro
+      color = event.textColor || '#ff0000';
+    }
 
   return { style: { backgroundColor, color } };
 };
