@@ -162,18 +162,8 @@ export default function ProfessionalCalendar({ blocks, workingHours, appointment
 
   // Definir estilos
   const eventStyleGetter = (event: any) => {
-  let backgroundColor = event.color || '#3174ad';
-  let color = event.textColor || '#000'; // define cor do texto, ou um padrão
-    // Opcional: lógica para destacar eventos
-    if (String(event.id).startsWith('appointment-')) {
-      backgroundColor = event.color || '#4caf50';  // verde
-      color = '#fff';
-    } else if (String(event.id).startsWith('block-')) {
-      backgroundColor = event.color || '#f8d7da'; // rosa claro
-    } else if (String(event.id).startsWith('unavailable-')) {
-      backgroundColor = event.color || '#f5f5f5'; // cinza claro
-      color = event.textColor || '#ff0000';
-    }
+  let backgroundColor = event.color || '#3174ad'; // Cor do evento (fundo)
+  let color = '#000'; // SEMPRE preto
 
   return { style: { backgroundColor, color } };
 };

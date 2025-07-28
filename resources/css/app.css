@@ -84,6 +84,18 @@
         border-color: var(--color-gray-200, currentColor);
     }
 }
+.rbc-event,
+.rbc-event-label,
+.rbc-date-cell,
+.rbc-show-more {
+  color: #000 !important;
+  fill: #000 !important;
+}
+.rbc-toolbar label,
+.rbc-toolbar button,
+.rbc-header {
+  color: #000 !important;
+}
 
 :root {
     --background: oklch(1 0 0);

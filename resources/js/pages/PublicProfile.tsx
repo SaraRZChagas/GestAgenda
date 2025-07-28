@@ -187,7 +187,7 @@ export default function PublicProfile({ profile }: PublicProfileProps) {
           <p className="text-gray-700">Veja as datas disponíveis e entre em contato conosco.</p>
           {/* Aqui entra o componente de calendário futuramente */}
 
-            <ProfessionalCalendar blocks={blocks} workingHours={workingHours} appointments={appointments}/>
+            <ProfessionalCalendar blocks={blocks} workingHours={workingHours} appointments={appointments} />
 
         </section>
         </main>

@@ -13,6 +13,7 @@ use App\Http\Controllers\Professional\WorkingHourController;
 use App\Http\Controllers\ProfileSwitchController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Professional\ProfessionalQuickClientController;
+use App\Http\Controllers\Professional\ClientController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -70,6 +71,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('schedule-blocks/types', [ScheduleBlockController::class, 'storeType'])->name('schedule-blocks.storeType');
         Route::delete('schedule-blocks/{id}', [ScheduleBlockController::class, 'destroy'])->name('schedule-blocks.destroy');
         Route::put('schedule-blocks/{id}', [ScheduleBlockController::class, 'update'])->name('schedule-blocks.update');
+
+        // Rota para buscar clientes
+        Route::get('clients/search', [ClientController::class, 'search'])->name('clients.search');
+
+        // Rota para exibir o perfil + histórico do cliente
+        Route::get('clients/{id}', [ClientController::class, 'show'])->name('clients.show');
     });
 });
 

@@ -11,19 +11,6 @@ interface BreadcrumbItem {
   href: string;
 }
 
-// interface Block {
-//   id: number;
-//   start: string;
-//   end: string;
-//   blockType: { name: string };
-// }
-
-// interface WorkingHour {
-//   idWorkingHours: number;
-//   dayOfWeek: number;     // 0 = domingo ... 6 = sábado
-//   startTime: string;
-//   endTime: string;
-// }
 interface RawWorkingHour {
   idWorkingHours: number;
   weekdayWorkingHours: number;
@@ -126,7 +113,29 @@ export default function Dashboard({ workingHours:rawWorkingHours, blocks: rawBlo
             </p>
           </Link>
 
-          {/* Card 4 - Histórico de Atendimentos */}
+          {/* Card 4 - Marcação de Agenda */}
+          <Link
+            href={route('professional.appointments.index')}
+            className="relative aspect-video overflow-hidden rounded-xl border border-gray-300 p-4 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+          >
+            <h3 className="text-lg font-semibold">Minhas Marcações</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Veja, edite ou agende atendimentos para seus clientes.
+            </p>
+          </Link>
+          
+          {/* Card 5 - Cadastro de Cliente */}
+          <Link
+            href={route('professional.quick-client.form')}
+            className="relative aspect-video overflow-hidden rounded-xl border border-gray-300 p-4 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"
+          >
+            <h3 className="text-lg font-semibold">Cadastro de Cliente</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Cadastre novos clientes rapidamente para agilizar seus atendimentos.
+            </p>
+          </Link>
+          
+          {/* Card 6 - Histórico de Atendimentos */}
           <Link
             href={route('professional.appointments.history')}
             className="relative aspect-video overflow-hidden rounded-xl border border-gray-300 p-4 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors"

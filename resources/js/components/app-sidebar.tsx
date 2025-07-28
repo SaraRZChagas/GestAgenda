@@ -70,6 +70,12 @@ export function AppSidebar() {
         },
 
         {
+            title: 'Buscar Cliente',
+            href: route('professional.clients.search'),
+            icon: Folder,
+        },
+
+        {
             title: 'Histórico de Atendimentos',
             href: '/professional/appointments/history',
             icon: Clock,
