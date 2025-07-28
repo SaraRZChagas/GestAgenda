@@ -30,11 +30,7 @@ const successMessage = (props as any)?.flash?.success;
         <div className="flex items-center gap-3 flex-shrink-0">
           <img src="/images/logo.svg" alt="Logo" className="h-10" />
           <h1
-            className="font-bold text-2xl sm:text-3xl md:text-[40px] tracking-wide"
-            style={{ fontFamily: 'Guttman Logo 1' }}
-          >
-            GestAgenda
-          </h1>
+            className="text-3xl sm:text-4xl md:text-[48px]" style={{ fontFamily: 'Guttman Logo 1' }}> GestAgenda </h1>
         </div>
         <nav className="flex flex-wrap w-full sm:w-auto gap-2 sm:gap-5 md:gap-8 font-light text-white text-lg sm:text-xl md:text-2xl items-center justify-end">
           <Link
@@ -89,7 +85,7 @@ const successMessage = (props as any)?.flash?.success;
       </header>
 
       {/* Hero */}
-      <section className="mt-28 px-8 py-20 flex flex-col lg:flex-row items-center justify-between max-w-[96%] mx-auto">
+      <section className="px-8 py-20 flex flex-col lg:flex-row items-center justify-between max-w-[96%] mx-auto">
         <div className="max-w-xl mb-12 lg:mb-0 text-white">
           <h2 className="text-4xl font-bold mb-6">Sua agenda. Seu tempo. Sua liberdade.</h2>
           <p className="text-lg leading-relaxed">
