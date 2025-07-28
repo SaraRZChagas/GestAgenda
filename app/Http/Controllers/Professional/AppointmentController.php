@@ -138,9 +138,14 @@ class AppointmentController extends Controller
 
         foreach ($workingHours as $wh) {
             if ($wh->weekdayWorkingHours == $dayOfWeek) {
-                $workStart = Carbon::parse($wh->startTimeWorkingHours);
-                $workEnd = Carbon::parse($wh->endTimeWorkingHours);
-                if ($start->between($workStart, $workEnd, true) && $end->between($workStart, $workEnd, false)) {
+                // monta horários no mesmo dia do agendamento, usando a hora do expediente
+                $workStart = $start->copy()->setTimeFromTimeString($wh->startTimeWorkingHours);
+                $workEnd = $start->copy()->setTimeFromTimeString($wh->endTimeWorkingHours);
+
+                if (
+                    $start->greaterThanOrEqualTo($workStart) &&
+                    $end->lessThanOrEqualTo($workEnd)
+                ) {
                     return true;
                 }
             }
@@ -178,4 +183,99 @@ class AppointmentController extends Controller
             })
             ->exists();
     }
+
+    public function edit($id)
+    {
+        $appointment = Appointment::with(['customer', 'service'])->findOrFail($id);
+        $professional = auth()->user()->professional;
+
+        if ($appointment->idProfessionals !== $professional->idProfessionals) {
+            abort(403);
+        }
+
+        $services = $professional->services()->where('isActive', true)->get();
+        $customers = Customer::where('idProfessionals', $professional->idProfessionals)->get();
+
+        return Inertia::render('professional/appointments/Edit', [
+            'appointment' => $appointment,
+            'services' => $services,
+            'customers' => $customers,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $professional = auth()->user()->professional;
+
+        if ($appointment->idProfessionals !== $professional->idProfessionals) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'idCustomers' => 'required|exists:customers,idCustomers',
+            'idServices' => 'required|exists:services,idServices',
+            'startDatetimeAppointments' => 'required|date',
+            'endDatetimeAppointments' => 'required|date|after:startDatetimeAppointments',
+            'status' => ['required', Rule::in(['scheduled', 'cancelled'])],
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        // Validar horários (pode reutilizar métodos privados)
+
+        // Atualiza o registro
+        $appointment->update([
+            'idCustomers' => $data['idCustomers'],
+            'idServices' => $data['idServices'],
+            'startDatetimeAppointments' => $data['startDatetimeAppointments'],
+            'endDatetimeAppointments' => $data['endDatetimeAppointments'],
+            'status' => $data['status'],
+            'notes' => $data['notes'],
+        ]);
+
+        return to_route('professional.appointments.index')->with('success', 'Marcação atualizada!');
+    }
+
+    public function destroy($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $professional = auth()->user()->professional;
+
+        if ($appointment->idProfessionals !== $professional->idProfessionals) {
+            abort(403);
+        }
+
+        $appointment->delete();
+
+        return to_route('professional.appointments.index')->with('success', 'Marcação cancelada!');
+    }
+
+    public function history(Request $request)
+    {
+        $professional = auth()->user()->professional;
+
+        $query = Appointment::where('idProfessionals', $professional->idProfessionals)
+            ->with(['customer', 'service'])
+            ->orderBy('startDatetimeAppointments', 'desc');
+
+        if ($request->filled('customer_id')) {
+            $query->where('idCustomers', $request->customer_id);
+        }
+
+        $appointments = $query->paginate(20);
+
+        $professionalId = $professional->idProfessionals;
+
+        $customers = Customer::whereHas('appointments', function ($query) use ($professionalId) {
+            $query->where('idProfessionals', $professionalId);
+        })->get();
+
+        return Inertia::render('professional/appointments/history', [
+            'appointments' => $appointments,
+            'customers' => $customers,
+            'filters' => $request->only('customer_id'),
+        ]);
+    }
+
+
 }
