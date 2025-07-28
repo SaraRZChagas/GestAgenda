@@ -27,4 +27,9 @@ class Customer extends Model
     {
         return $this->hasMany(Contact::class, 'idCustomers', 'idCustomers');
     }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'idCustomers', 'idCustomers');
+    }
 }

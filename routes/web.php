@@ -55,7 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/working-hours/{id}', [WorkingHourController::class, 'destroy'])->name('working-hours.destroy');
 
         // Histórico de atendimentos
-        Route::get('/appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');
+        Route::get('appointments/history', [AppointmentController::class, 'history'])->name('appointments.history');
+        Route::resource('appointments', AppointmentController::class);
 
         // Marcações (appointments) - REST completo
         Route::resource('appointments', AppointmentController::class);
