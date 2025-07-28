@@ -4,7 +4,8 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Clock, Calendar, Repeat } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Clock, Calendar, Repeat, CalendarClock,CalendarX,BriefcaseBusiness,FileStack,ChartLine  } from 'lucide-react';
+import { DynamicIcon } from 'lucide-react/dynamic';
 import AppLogo from './app-logo';
 import { router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
@@ -50,23 +51,23 @@ export function AppSidebar() {
         {
             title: 'Horário de Trabalho',
             href: '/professional/working-hours',
-            icon: Calendar,
+            icon: CalendarClock,
         },
         {
             title: 'Bloqueios de Agenda',
             href: '/professional/schedule-blocks',
-            icon: LayoutGrid,
+            icon: CalendarX,
         },
         {
             title: 'Serviços Oferecidos',
             href: '/professional/services',
-            icon: Folder,
+            icon: BriefcaseBusiness,
         },
 
         {
             title: 'Cadastro Rápido de Cliente',
             href: '/professional/quick-client',
-            icon: Folder,
+            icon: FileStack ,
         },
 
         {
@@ -78,7 +79,7 @@ export function AppSidebar() {
         {
             title: 'Histórico de Atendimentos',
             href: '/professional/appointments/history',
-            icon: Clock,
+            icon: ChartLine,
         },
     ];
 
