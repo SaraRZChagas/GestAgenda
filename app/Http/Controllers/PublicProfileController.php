@@ -16,6 +16,7 @@ class PublicProfileController extends Controller
                 'professional.workingHours',
                 'professional.contacts.contactType',
                 'professional.scheduleBlocks.blockType',
+                'professional.appointments'
             ])
             ->firstOrFail();
 
@@ -59,6 +60,7 @@ class PublicProfileController extends Controller
         })->toArray() ?? [],
         'blocks' => $professional->scheduleBlocks ?? [],
         'workingHoursArray' => $professional->workingHours ?? [],
+        'appointment' => $professional-> appointments ?? [],
     ];
 
     return Inertia::render('PublicProfile', [

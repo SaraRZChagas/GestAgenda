@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import type { SharedData } from '@/types';
-import ProfessionalCalendar, { ScheduleBlock, WorkingHour }  from '@/components/ProfessionalCalendar';
+import ProfessionalCalendar, { ScheduleBlock, WorkingHour, Appointment }  from '@/components/ProfessionalCalendar';
 
 interface RawWorkingHour {
   idWorkingHours: number;
@@ -20,6 +20,15 @@ interface RawScheduleBlock {
     colorScheduleBlocksTypes?: string;
   };
 }
+
+interface RawAppointments {
+    idAppointments: number;
+    startDatetimeAppointments: string;
+    endDatetimeAppointments: string;
+    service: any;
+    customer: any;
+  }
+
 interface PublicProfileProps {
   profile: {
     name: string;
@@ -38,6 +47,7 @@ interface PublicProfileProps {
     }[];
     blocks?: RawScheduleBlock[];           
     workingHoursArray?: RawWorkingHour[];
+    appointment: RawAppointments[];
   };
 }
 
@@ -61,6 +71,17 @@ export default function PublicProfile({ profile }: PublicProfileProps) {
       startTime: w.startTimeWorkingHours,
       endTime: w.endTimeWorkingHours,
     }))??[];
+
+    const appointments: Appointment[] = profile.appointment.map((a) => ({
+  id: a.idAppointments,
+  title: a.service?.nameServices ?? 'Atendimento',
+  start: new Date(a.startDatetimeAppointments),
+  end: new Date(a.endDatetimeAppointments),
+  allDay: false,
+  color: '#4caf50', // cor verde para marcações, por exemplo
+  customerName: a.customer?.nameCustomers ?? '',
+}));
+
   return (
     <>
       <Head title={`GestAgenda - ${profile.name}`} />
@@ -166,7 +187,7 @@ export default function PublicProfile({ profile }: PublicProfileProps) {
           <p className="text-gray-700">Veja as datas disponíveis e entre em contato conosco.</p>
           {/* Aqui entra o componente de calendário futuramente */}
 
-            <ProfessionalCalendar blocks={blocks} workingHours={workingHours} />
+            <ProfessionalCalendar blocks={blocks} workingHours={workingHours} appointments={appointments}/>
 
         </section>
         </main>

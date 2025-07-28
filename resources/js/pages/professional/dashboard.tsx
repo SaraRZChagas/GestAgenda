@@ -4,7 +4,7 @@ import SchedulingRules from '@/pages/professional/components/scheduling-rules';
 import ServiceManager from '@/pages/professional/components/service-manager';
 import AppointmentHistory from '@/pages/professional/components/appointment-history';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import ProfessionalCalendar, { ScheduleBlock, WorkingHour } from '@/components/ProfessionalCalendar';
+import ProfessionalCalendar, { ScheduleBlock, WorkingHour, Appointment } from '@/components/ProfessionalCalendar';
 
 interface BreadcrumbItem {
   title: string;
@@ -42,13 +42,24 @@ interface RawScheduleBlock {
   };
 }
 
+interface RawAppointments {
+    idAppointments: number;
+    startDatetimeAppointments: string;
+    endDatetimeAppointments: string;
+    service: any;
+    customer: any;
+  }
+
+
+
 interface Props {
   breadcrumbs: { title: string; href: string }[];
   blocks: RawScheduleBlock[];
   workingHours: RawWorkingHour[];
+  appointments: RawAppointments[];
 }
 
-export default function Dashboard({ workingHours:rawWorkingHours, blocks: rawBlocks, breadcrumbs }: Props) {
+export default function Dashboard({ workingHours:rawWorkingHours, blocks: rawBlocks, breadcrumbs, appointments:rawAppointments }: Props) {
   
   // Adaptação rápida inline
   const blocks: ScheduleBlock[] = rawBlocks.map((b) => ({
@@ -65,6 +76,16 @@ export default function Dashboard({ workingHours:rawWorkingHours, blocks: rawBlo
     startTime: w.startTimeWorkingHours,
     endTime: w.endTimeWorkingHours,
   }));
+
+  const appointments: Appointment[] = rawAppointments.map((a) => ({
+  id: a.idAppointments,
+  title: a.service?.nameServices ?? 'Atendimento',
+  start: new Date(a.startDatetimeAppointments),
+  end: new Date(a.endDatetimeAppointments),
+  allDay: false,
+  color: '#4caf50', // cor verde para marcações, por exemplo
+  customerName: a.customer?.nameCustomers ?? '',
+}));
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -126,7 +147,7 @@ export default function Dashboard({ workingHours:rawWorkingHours, blocks: rawBlo
       <div className="flex flex-col gap-8 p-6">
         <div>
           <h2 className="text-xl font-bold mb-4">Agenda do Profissional</h2>
-          <ProfessionalCalendar blocks={blocks} workingHours={workingHours} />
+          <ProfessionalCalendar blocks={blocks} workingHours={workingHours} appointments={appointments} />
         </div>
       </div>
     </AppLayout>
