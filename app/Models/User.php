@@ -20,7 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
+        'role', 
     ];
 
     /**
@@ -45,4 +47,33 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-}
+
+    public function professional()
+    {
+                $returnRelationship = $this->hasOne(Professional::class, 'idUsers', 'id'); 
+        \Log::info('Accessing Custormer:', [
+            'professional' => $returnRelationship,
+        ]);
+        return $returnRelationship;
+    }
+
+    public function customer()
+    {
+        $returnRelationship = $this->hasOne(Customer::class, 'idUsers', 'id');
+        \Log::info('Accessing Custormer:', [
+            'customer' => $returnRelationship,
+        ]);
+        return $returnRelationship;
+    }
+
+    public function isProfessional(): bool
+    {
+        return $this->role === 'professional';
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->role === 'client';
+    }
+
+};

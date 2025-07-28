@@ -10,34 +10,45 @@ import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 
 type RegisterForm = {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  role: string;
+  username: string;
+  profile_photo: File | null;
 };
 
+
+
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
+    const { data, setData, post, processing, errors, reset } = useForm<RegisterForm>({
         name: '',
+        phone: '',
         email: '',
         password: '',
         password_confirmation: '',
+        role: 'client',
+        username: '',
+        profile_photo: null,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('register'), {
             onFinish: () => reset('password', 'password_confirmation'),
+            forceFormData: true,
         });
     };
 
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
+        <AuthLayout title="Crie uma conta" description="Insira suas informações para criar uma nova conta.">
             <Head title="Register" />
-            <form className="flex flex-col gap-6" onSubmit={submit}>
+            <form className="flex flex-col gap-6" onSubmit={submit} encType="multipart/form-data">
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name">Nome</Label>
                         <Input
                             id="name"
                             type="text"
@@ -52,14 +63,29 @@ export default function Register() {
                         />
                         <InputError message={errors.name} className="mt-2" />
                     </div>
+                    <div>
+                    <Label htmlFor="phone">Telefone</Label>
+                        <Input
+                            id="phone"
+                            name="phone"
+                            type="text"
+                            required
+                            tabIndex={2}
+                            value={data.phone}
+                            onChange={(e) => setData('phone', e.target.value)}
+                            disabled={processing}
+                            placeholder="000000000"
+                        />
+                        <InputError message={errors.phone} className="mt-2" />
+                    </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                        <Label htmlFor="email">Email</Label>
                         <Input
                             id="email"
                             type="email"
                             required
-                            tabIndex={2}
+                            tabIndex={3}
                             autoComplete="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
@@ -70,12 +96,46 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="username">Username público</Label>
+                        <div className="bg-gray-100 text-sm text-gray-600 p-3 rounded">
+                        Escolha um nome de usuário único, composto apenas por letras, sem espaços, acentos ou caracteres especiais. Esse nome será usado para criar o link do seu site público (ex: gestagenda.pt/seuusername), por isso deve ser exclusivo para cada usuário.
+                        </div>
+                        <Input
+                            id="username"
+                            type="text"
+                            required
+                            tabIndex={4}
+                            placeholder="ex: joaotreinador"
+                            value={data.username}
+                            onChange={(e) => setData('username', e.target.value)}
+                            disabled={processing}
+                        />
+                        <InputError message={errors.username} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="profile_photo">Foto de perfil</Label>
+                        <div className="bg-gray-100 text-sm text-gray-600 p-3 rounded">
+                        Envie uma foto em formato retrato, sua ou da sua empresa. O arquivo deve estar nos formatos JPG ou PNG, com tamanho máximo de 500 pixels de altura por 400 pixels de largura. Certifique-se de que a imagem esteja nítida e bem enquadrada.
+                        </div>
+                        <Input
+                            id="profile_photo"
+                            type="file"
+                            tabIndex={5}
+                            accept="image/*"
+                            onChange={(e) => { console.log(e); setData('profile_photo', e.target.files?.[0] || null); }}
+                            disabled={processing}
+                        />
+                        <InputError message={errors.profile_photo} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="password">Senha</Label>
                         <Input
                             id="password"
                             type="password"
                             required
-                            tabIndex={3}
+                            tabIndex={6}
                             autoComplete="new-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
@@ -86,12 +146,12 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation">Confirm password</Label>
+                        <Label htmlFor="password_confirmation">Confirme a senha</Label>
                         <Input
                             id="password_confirmation"
                             type="password"
                             required
-                            tabIndex={4}
+                            tabIndex={7}
                             autoComplete="new-password"
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
@@ -101,17 +161,43 @@ export default function Register() {
                         <InputError message={errors.password_confirmation} />
                     </div>
 
-                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Create account
-                    </Button>
+                     <div>
+                    <label>
+                        <input
+                            type="radio"
+                            name="role"
+                            tabIndex={8}
+                            value="client"
+                            checked={data.role === 'client'}
+                            onChange={(e) => setData('role', e.target.value)}
+                        />
+                        Cliente
+                    </label>
+                    <label className="ml-4">
+                        <input
+                            type="radio"
+                            tabIndex={9}
+                            name="role"
+                            value="professional"
+                            checked={data.role === 'professional'}
+                            onChange={(e) => setData('role', e.target.value)}
+                        />
+                        Profissional
+                    </label>
                 </div>
 
+                    <Button type="submit" className="mt-2 w-full" tabIndex={10} disabled={processing}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        Criar conta
+                    </Button>
+                
+
                 <div className="text-center text-sm text-muted-foreground">
-                    Already have an account?{' '}
-                    <TextLink href={route('login')} tabIndex={6}>
+                    Já tem uma conta?{' '}
+                    <TextLink href={route('login')} tabIndex={11}>
                         Log in
                     </TextLink>
+                </div>
                 </div>
             </form>
         </AuthLayout>
